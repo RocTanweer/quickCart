@@ -1,0 +1,33 @@
+{
+  "name": "quick_cart_backend",
+  "version": "1.0.0",
+  "description": "This is backend of quickcart e commerce app",
+  "main": "index.server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RocTanweer/quickCart.git"
+  },
+  "keywords": [
+    "e commerce",
+    "mysql",
+    "expressjs",
+    "nodejs",
+    "jwt"
+  ],
+  "author": "Roc Tanweer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RocTanweer/quickCart/issues"
+  },
+  "homepage": "https://github.com/RocTanweer/quickCart#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
