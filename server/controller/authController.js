@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 
+import { generateAccessToken } from "../utils/functions.js";
+
 import {
   isThereUser,
   createUser,
@@ -47,6 +49,21 @@ export const login = async (req, res) => {
       res.status(401);
       throw new Error("Incorrect password");
     }
+
+    const accessToken = generateAccessToken(userFromDB.user_id);
+
+    res.cookie(
+      "qcticket",
+      { token: accessToken },
+      {
+        httpOnly: true,
+        maxAge: 86400000, // milliseconds
+        // secure: true,
+        sameSite: "Strict",
+      }
+    );
+
+    delete userFromDB.password;
 
     res.status(200).json({
       userData: userFromDB,
