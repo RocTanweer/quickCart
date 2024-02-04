@@ -11,12 +11,34 @@ export const getUsers = async () => {
   }
 };
 
+export const isThereUser = async (userEmail) => {
+  try {
+    const sql = `SELECT 1 FROM user WHERE email = ?`;
+    const [result] = await connection.execute(sql, [userEmail]);
+
+    return result[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUserById = async (userId) => {
   try {
     const sql = `SELECT * FROM user WHERE user_id = ?`;
     const [result] = await connection.execute(sql, [userId]);
 
     return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserByEmail = async (userEmail) => {
+  try {
+    const sql = `SELECT * FROM user WHERE email = ?`;
+    const [result] = await connection.execute(sql, [userEmail]);
+
+    return result[0];
   } catch (error) {
     throw error;
   }
