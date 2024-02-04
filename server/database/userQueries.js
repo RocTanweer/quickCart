@@ -27,7 +27,7 @@ export const getUserById = async (userId) => {
     const sql = `SELECT * FROM user WHERE user_id = ?`;
     const [result] = await connection.execute(sql, [userId]);
 
-    return result;
+    return result[0];
   } catch (error) {
     throw error;
   }
