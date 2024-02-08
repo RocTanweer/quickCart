@@ -7,10 +7,11 @@ USE `quickcart`;
 -- Create the user table
 CREATE TABLE IF NOT EXISTS `user` (
     `user_id` INT NOT NULL AUTO_INCREMENT,
-    `name` varchar(30) NOT NULL,
-    `email` varchar(50) NOT NULL,
-    `password` varchar(255) NOT NULL,
-    `profile_image` varchar(255) NOT NULL,
+    `name` VARCHAR(30) NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `profile_image` VARCHAR(255) NOT NULL,
+    `role` ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `email_UNIQUE` (`email`)
 );
