@@ -11,7 +11,6 @@ import {
 export const registration = async (req, res) => {
   try {
     const { name, email, password, profileImage } = req.body;
-    // checking if the same user exist in the database
     if (await isThereUser(email)) {
       res.status(409);
       throw new Error(`User already exist with email ${email}`);
@@ -42,7 +41,6 @@ export const login = async (req, res) => {
       res.status(404);
       throw new Error(`User not found with email ${email}`);
     }
-
     const passwordMatches = await bcrypt.compare(password, userFromDB.password);
 
     if (!passwordMatches) {
@@ -52,16 +50,10 @@ export const login = async (req, res) => {
 
     const accessToken = generateAccessToken(userFromDB.user_id);
 
-    res.cookie(
-      "qcticket",
-      { token: accessToken },
-      {
-        httpOnly: true,
-        maxAge: 86400000, // milliseconds
-        // secure: true,
-        sameSite: "Strict",
-      }
-    );
+    res.cookie("qcticket", JSON.stringify({ token: accessToken }), {
+      httpOnly: true,
+      maxAge: 86400000, // in milliseconds
+    });
 
     delete userFromDB.password;
 

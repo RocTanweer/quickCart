@@ -3,7 +3,7 @@ import { ACCESS_TOKEN_SECRET } from "../config/envVar.js";
 
 export const checkForAuthorizationToken = (req, res, next) => {
   try {
-    const cookie = req.cookies["qcticket"];
+    const cookie = JSON.parse(req.cookies["qcticket"]);
 
     if (!cookie || !cookie.token) {
       res.status(401);
