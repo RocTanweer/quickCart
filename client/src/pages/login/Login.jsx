@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import {
   Typography,
@@ -18,16 +19,25 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { emailValidator } from "../../lib/yupSchemas";
 import { FlexBox } from "../../layouts";
+import { login } from "../../state/slices/loginSlice";
 
 export const Login = () => {
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: emailValidator,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await dispatch(login(values)).unwrap();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
