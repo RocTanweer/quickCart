@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
 
 import {
   Typography,
@@ -7,19 +9,21 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  Button,
   Link,
+  Button,
+  CircularProgress,
 } from "@mui/material";
-
-import { useFormik } from "formik";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { FlexBox } from "../../layouts";
 import { emailValidator } from "../../lib/yupSchemas";
+import { signup } from "../../state/slices/signupSlice";
 
 export const Signup = () => {
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -27,8 +31,14 @@ export const Signup = () => {
       password: "",
     },
     validationSchema: emailValidator,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await dispatch(signup(values)).unwrap();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
@@ -109,7 +119,13 @@ export const Signup = () => {
             />
           </Box>
           <Button fullWidth variant="contained" type="submit">
-            Submit
+            {formik.isSubmitting ? (
+              <>
+                <CircularProgress color="grey" size={24.5} />
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
           <Link href="/login" textAlign={"right"}>
             Already have an account? Log in
