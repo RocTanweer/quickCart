@@ -8,6 +8,9 @@ import Home from "../../pages/home/Home.jsx";
 import Products from "../../pages/products/Products.jsx";
 import ProductDetails from "../../pages/productDetails/ProductDetails.jsx";
 import PageNotFound from "../../pages/pageNotFound/PageNotFound.jsx";
+import GuardRoute from "../../components/GuardRoute.jsx";
+import Profile from "../../pages/profile/Profile.jsx";
+import Admin from "../../pages/admin/Admin.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -35,5 +38,23 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
+  },
+  {
+    element: <GuardRoute role={"USER"} />,
+    children: [
+      {
+        path: "/profile/:name",
+        element: <Profile />,
+      },
+    ],
+  },
+  {
+    element: <GuardRoute role={"ADMIN"} />,
+    children: [
+      {
+        path: "/admin",
+        element: <Admin />,
+      },
+    ],
   },
 ]);
