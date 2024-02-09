@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useLocation } from "react-router-dom";
 
 import {
   Typography,
@@ -13,16 +14,26 @@ import {
 } from "@mui/material";
 
 import { useFormik } from "formik";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { emailValidator } from "../../lib/yupSchemas";
 import { FlexBox } from "../../layouts";
-import { login } from "../../state/slices/loginSlice";
+import {
+  login,
+  setUserLoginInfo,
+  userRoleSelector,
+} from "../../state/slices/loginSlice";
+
+const adminAccessiblePaths = ["/admin"];
 
 export const Login = () => {
   const dispatch = useDispatch();
+  const userRole = useSelector(userRoleSelector);
+  const { state: locState } = useLocation();
 
   const formik = useFormik({
     initialValues: {
@@ -33,6 +44,10 @@ export const Login = () => {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         await dispatch(login(values)).unwrap();
+        const userLoginInfo = jwtDecode(
+          JSON.parse(Cookies.get("qcticket")).token
+        );
+        dispatch(setUserLoginInfo(userLoginInfo));
       } catch (error) {
         console.error(error);
       } finally {
@@ -48,6 +63,28 @@ export const Login = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  if (Cookies.get("qcticket")) {
+    const prevPath = locState?.prevPath;
+
+    const isAdminRedirect =
+      prevPath !== undefined &&
+      adminAccessiblePaths.includes(prevPath) &&
+      userRole === "ADMIN";
+
+    const isAuthRedirect =
+      prevPath !== undefined &&
+      !adminAccessiblePaths.includes(prevPath) &&
+      (userRole === "ADMIN" || userRole === "USER");
+
+    const navigateJsx =
+      isAdminRedirect || isAuthRedirect ? (
+        <Navigate to={prevPath} replace={true} />
+      ) : (
+        <Navigate to={"/"} replace={true} />
+      );
+    return <>{navigateJsx}</>;
+  }
 
   return (
     <FlexBox csx={{ minHeight: "100vh" }}>
