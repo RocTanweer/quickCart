@@ -47,19 +47,16 @@ export const login = async (req, res) => {
       res.status(401);
       throw new Error("Incorrect password");
     }
-
-    const accessToken = generateAccessToken(userFromDB.user_id);
+    const accessToken = generateAccessToken({
+      userId: userFromDB.user_id,
+      userRole: userFromDB.role,
+    });
 
     res.cookie("qcticket", JSON.stringify({ token: accessToken }), {
-      httpOnly: true,
       maxAge: 86400000, // in milliseconds
     });
 
-    delete userFromDB.password;
-
-    res.status(200).json({
-      userData: userFromDB,
-    });
+    res.sendStatus(200);
   } catch (error) {
     res.json({ message: error.message });
   }
