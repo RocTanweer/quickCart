@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Navigate } from "react-router-dom";
 import { useFormik } from "formik";
+import Cookies from "js-cookie";
 
 import {
   Typography,
@@ -49,6 +51,10 @@ export const Signup = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  if (Cookies.get("qcticket")) {
+    return <Navigate to={"/"} replace={true} />;
+  }
 
   return (
     <FlexBox csx={{ minHeight: "100vh" }}>
