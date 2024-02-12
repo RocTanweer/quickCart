@@ -38,37 +38,36 @@ export const getProducts = async (conditions) => {
     const {
       page,
       pageSize,
-      category,
-      brand,
+      productCategoryId,
+      productBrandId,
       minPrice,
       maxPrice,
       availability,
     } = conditions;
 
     // later fetch only columns that is required in product list
-    let sql = "SELECT id, unit_price, name, image FROM product WHERE 1=1";
+    let sql = "SELECT id, unit_price, name, image FROM product WHERE 1 = 1";
     const values = [];
 
-    if (category) {
+    if (productCategoryId) {
       sql += " AND product_category_id = ?";
-      values.push(category);
+      values.push(productCategoryId);
     }
-    if (brand) {
+    if (productBrandId) {
       sql += " AND product_brand_id = ?";
-      values.push(brand);
+      values.push(productBrandId);
     }
-    if (availability) sql += ` AND stock_quantity > 0`;
+    if (availability) sql += " AND stock_quantity > 0";
 
     if (minPrice && maxPrice) {
-      (sql += " AND unit_price >= ? AND unit_price <= ?"),
-        values.push(parseFloat(minPrice), parseFloat(maxPrice));
+      sql += " AND unit_price >= ? AND unit_price <= ?";
+      values.push(minPrice, maxPrice);
     }
 
     const offset = (parseInt(page) - 1) * parseInt(pageSize);
 
-    sql += ` LIMIT ?, ?`;
-    values.push(offset, parseInt(pageSize));
-
+    sql += " LIMIT ?, ?";
+    values.push(`${offset}`, pageSize);
     const [results] = await connection.execute(sql, values);
     return results;
   } catch (error) {
@@ -90,8 +89,13 @@ export const getProductById = async (productId) => {
 
 export const updateProduct = async (productId, productUpdates) => {
   try {
-    const { unitPrice, stockQuantity, name, description, image } =
-      productUpdates;
+    const {
+      unitPrice = null,
+      stockQuantity = null,
+      name = null,
+      description = null,
+      image = null,
+    } = productUpdates;
 
     const sql = `UPDATE product
     SET
