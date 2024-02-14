@@ -13,7 +13,12 @@ export const registration = async (req, res) => {
     const { name, email, password, profileImage } = req.body;
     if (await isThereUser(email)) {
       res.status(409);
-      throw new Error(`User already exist with email ${email}`);
+      throw new Error(null, {
+        cause: {
+          field: "email",
+          value: `User already exist with email ${email}`,
+        },
+      });
     }
 
     const hashed_password = await bcrypt.hash(password, 10);
@@ -28,7 +33,7 @@ export const registration = async (req, res) => {
     await createUser(newUserInfo);
     res.sendStatus(201);
   } catch (error) {
-    res.json({ message: error.message });
+    res.json(error.cause);
   }
 };
 
@@ -39,13 +44,20 @@ export const login = async (req, res) => {
     const userFromDB = await getUserByEmail(email);
     if (!userFromDB) {
       res.status(404);
-      throw new Error(`User not found with email ${email}`);
+      throw new Error(null, {
+        cause: {
+          field: "email",
+          value: `User not found with email ${email}`,
+        },
+      });
     }
     const passwordMatches = await bcrypt.compare(password, userFromDB.password);
 
     if (!passwordMatches) {
       res.status(401);
-      throw new Error("Incorrect password");
+      throw new Error(null, {
+        cause: { field: "password", value: "Incorrect password" },
+      });
     }
     const accessToken = generateAccessToken({
       userId: userFromDB.user_id,
@@ -58,7 +70,7 @@ export const login = async (req, res) => {
 
     res.sendStatus(200);
   } catch (error) {
-    res.json({ message: error.message });
+    res.json(error.cause);
   }
 };
 
