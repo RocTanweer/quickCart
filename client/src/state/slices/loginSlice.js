@@ -4,10 +4,19 @@ import { jwtDecode } from "jwt-decode";
 
 import { axCli } from "../../lib/axiosClient";
 
-export const login = createAsyncThunk("login/submit", async (userData) => {
-  const response = await axCli.post("/api/login", userData);
-  return response.data;
-});
+export const loginAsync = createAsyncThunk(
+  "login/submit",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axCli.post("/api/login", userData);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
 
 export const loginSlice = createSlice({
   name: "login",
@@ -25,13 +34,13 @@ export const loginSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(login.pending, (state) => {
+      .addCase(loginAsync.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(login.fulfilled, (state) => {
+      .addCase(loginAsync.fulfilled, (state) => {
         state.status = "succeeded";
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(loginAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
@@ -39,6 +48,7 @@ export const loginSlice = createSlice({
 });
 
 export const userRoleSelector = (state) => state.login.userLoginInfo?.userRole;
+export const loginStatusSelector = (state) => state.login.status;
 
 export const { setUserLoginInfo } = loginSlice.actions;
 

@@ -2,16 +2,24 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { axCli } from "../../lib/axiosClient";
 
-export const signup = createAsyncThunk("signup/submit", async (userData) => {
-  const data = {
-    ...userData,
-    profileImage: "https://google.com",
-  };
+export const signupAsync = createAsyncThunk(
+  "signup/submit",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const data = {
+        ...userData,
+        profileImage: "https://google.com",
+      };
 
-  const response = await axCli.post("/api/register", data);
-
-  return response.data;
-});
+      const response = await axCli.post("/api/register", data);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
 
 export const signupSlice = createSlice({
   name: "signup",
@@ -23,18 +31,20 @@ export const signupSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(signup.pending, (state) => {
+      .addCase(signupAsync.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(signup.fulfilled, (state, action) => {
+      .addCase(signupAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.data = action.payload;
       })
-      .addCase(signup.rejected, (state, action) => {
+      .addCase(signupAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
   },
 });
+
+export const signupStatusSelector = (state) => state.signup.status;
 
 export default signupSlice.reducer;
