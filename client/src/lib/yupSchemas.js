@@ -1,5 +1,5 @@
 import { object, string } from "yup";
 
 export const emailValidator = object({
-  email: string().email(),
+  email: string().email("Invalid email"),
 });
