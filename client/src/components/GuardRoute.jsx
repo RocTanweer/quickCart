@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 
 import { userRoleSelector } from "../state/slices/loginSlice";
 
+import { Header } from "../layouts";
+
 const GuardRoute = ({ role }) => {
   const userRole = useSelector(userRoleSelector);
   const location = useLocation();
@@ -16,6 +18,7 @@ const GuardRoute = ({ role }) => {
   }
   return (
     <>
+      <Header />
       {isAuthorize ? (
         <Outlet />
       ) : (
