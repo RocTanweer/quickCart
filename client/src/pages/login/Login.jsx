@@ -11,6 +11,7 @@ import {
   IconButton,
   Button,
   Link,
+  CircularProgress,
 } from "@mui/material";
 
 import { useFormik } from "formik";
@@ -23,7 +24,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { emailValidator } from "../../lib/yupSchemas";
 import { FlexBox } from "../../layouts";
 import {
-  login,
+  loginAsync,
+  loginStatusSelector,
   setUserLoginInfo,
   userRoleSelector,
 } from "../../state/slices/loginSlice";
@@ -33,6 +35,7 @@ const adminAccessiblePaths = ["/admin"];
 export const Login = () => {
   const dispatch = useDispatch();
   const userRole = useSelector(userRoleSelector);
+  const loginStatus = useSelector(loginStatusSelector);
   const { state: locState } = useLocation();
 
   const formik = useFormik({
@@ -41,17 +44,16 @@ export const Login = () => {
       password: "",
     },
     validationSchema: emailValidator,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values) => {
       try {
-        await dispatch(login(values)).unwrap();
+        await dispatch(loginAsync(values)).unwrap();
         const userLoginInfo = jwtDecode(
           JSON.parse(Cookies.get("qcticket")).token
         );
         dispatch(setUserLoginInfo(userLoginInfo));
       } catch (error) {
-        console.error(error);
-      } finally {
-        setSubmitting(false);
+        const { field, value } = error;
+        formik.setFieldError(field, value);
       }
     },
   });
@@ -112,7 +114,7 @@ export const Login = () => {
               helperText={
                 formik.errors.email &&
                 formik.touched.email &&
-                "Email is invalid"
+                formik.errors.email
               }
               required
             />
@@ -126,6 +128,12 @@ export const Login = () => {
               type={showPassword ? "text" : "password"}
               fullWidth
               onChange={formik.handleChange}
+              error={formik.errors.password && formik.touched.password}
+              helperText={
+                formik.errors.password &&
+                formik.touched.password &&
+                formik.errors.password
+              }
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -143,7 +151,13 @@ export const Login = () => {
             />
           </Box>
           <Button fullWidth variant="contained" type="submit">
-            Submit
+            {loginStatus === "loading" ? (
+              <>
+                <CircularProgress color="grey" size={24.5} />
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
           <Link href="/signup" textAlign={"right"}>
             Do not have an account? Register

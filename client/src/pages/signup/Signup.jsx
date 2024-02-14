@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import Cookies from "js-cookie";
 
@@ -21,10 +21,15 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { FlexBox } from "../../layouts";
 import { emailValidator } from "../../lib/yupSchemas";
-import { signup } from "../../state/slices/signupSlice";
+import {
+  signupAsync,
+  signupStatusSelector,
+} from "../../state/slices/signupSlice";
 
 export const Signup = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const signupStatus = useSelector(signupStatusSelector);
 
   const formik = useFormik({
     initialValues: {
@@ -33,13 +38,13 @@ export const Signup = () => {
       password: "",
     },
     validationSchema: emailValidator,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values) => {
       try {
-        await dispatch(signup(values)).unwrap();
+        await dispatch(signupAsync(values)).unwrap();
+        navigate("/login", { replace: true });
       } catch (error) {
-        console.error(error);
-      } finally {
-        setSubmitting(false);
+        const { field, value } = error;
+        formik.setFieldError(field, value);
       }
     },
   });
@@ -58,7 +63,7 @@ export const Signup = () => {
 
   return (
     <FlexBox csx={{ minHeight: "100vh" }}>
-      <Stack gap={2} sx={{ maxWidth: "396px", width: "100%", height: "auto" }}>
+      <Stack gap={2} sx={{ maxWidth: "450px", width: "100%", height: "auto" }}>
         <Box>
           <Typography
             sx={{ textAlign: "center" }}
@@ -94,7 +99,7 @@ export const Signup = () => {
               helperText={
                 formik.errors.email &&
                 formik.touched.email &&
-                "Email is invalid"
+                formik.errors.email
               }
             />
           </Box>
@@ -125,7 +130,7 @@ export const Signup = () => {
             />
           </Box>
           <Button fullWidth variant="contained" type="submit">
-            {formik.isSubmitting ? (
+            {signupStatus === "loading" ? (
               <>
                 <CircularProgress color="grey" size={24.5} />
               </>
