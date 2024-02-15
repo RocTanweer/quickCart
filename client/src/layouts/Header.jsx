@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { userRoleSelector } from "../state/slices/loginSlice";
+import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
+
+import { userRoleSelector } from "../state/slices/loginSlice";
+import { logoutAsync } from "../state/slices/logoutSlice";
+import { isLoggedIn } from "../utils/function";
 
 import {
   Avatar,
@@ -52,6 +55,7 @@ const Header = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const userRole = useSelector(userRoleSelector);
+  const dispatch = useDispatch();
   const location = useLocation();
 
   const handleOpenNavMenu = (event) => {
@@ -67,6 +71,14 @@ const Header = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutAsync()).unwrap;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const filteredUserMenu =
@@ -186,56 +198,78 @@ const Header = () => {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open user menu">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Tanweer" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {filteredUserMenu.map(({ name, icon, path }) => (
-                <MenuItem
-                  sx={{ padding: "0px" }}
-                  key={name}
-                  onClick={handleCloseUserMenu}
-                >
-                  <Button
-                    sx={{
-                      color: "inherit",
-                    }}
-                    fullWidth
-                    variant="Outlined"
-                    component={NavLink}
-                    to={path}
-                    startIcon={icon}
+          {isLoggedIn() && (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open user menu">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Tanweer" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {filteredUserMenu.map(({ name, icon, path }) => (
+                  <MenuItem
+                    sx={{ padding: "0px" }}
+                    key={name}
+                    onClick={handleCloseUserMenu}
                   >
-                    {name}
+                    <Button
+                      sx={{
+                        color: "inherit",
+                      }}
+                      fullWidth
+                      variant="Outlined"
+                      component={NavLink}
+                      to={path}
+                      startIcon={icon}
+                    >
+                      {name}
+                    </Button>
+                  </MenuItem>
+                ))}
+                <Divider />
+                <MenuItem sx={{ padding: "0px" }} onClick={handleCloseUserMenu}>
+                  <Button
+                    onClick={handleLogout}
+                    fullWidth
+                    startIcon={<LogoutIcon />}
+                  >
+                    Logout
                   </Button>
                 </MenuItem>
-              ))}
-              <Divider />
-              <MenuItem sx={{ padding: "0px" }} onClick={handleCloseUserMenu}>
-                <Button fullWidth startIcon={<LogoutIcon />}>
-                  Logout
-                </Button>
-              </MenuItem>
-            </Menu>
-          </Box>
+              </Menu>
+            </Box>
+          )}
+
+          {!isLoggedIn() && (
+            <>
+              <Button component={NavLink} to={"/signup"} variant="outlined">
+                Signup
+              </Button>
+              <Button
+                component={NavLink}
+                to={"/login"}
+                sx={{ ml: 1 }}
+                variant="contained"
+              >
+                Login
+              </Button>
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

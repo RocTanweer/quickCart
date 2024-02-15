@@ -29,6 +29,7 @@ import {
   setUserLoginInfo,
   userRoleSelector,
 } from "../../state/slices/loginSlice";
+import { isLoggedIn } from "../../utils/function";
 
 const adminAccessiblePaths = ["/admin"];
 
@@ -66,7 +67,7 @@ export const Login = () => {
     event.preventDefault();
   };
 
-  if (Cookies.get("qcticket")) {
+  if (isLoggedIn()) {
     const prevPath = locState?.prevPath;
 
     const isAdminRedirect =
