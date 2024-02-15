@@ -31,6 +31,9 @@ export const loginSlice = createSlice({
     setUserLoginInfo(state, action) {
       state.userLoginInfo = action.payload;
     },
+    removeUserLoginInfo(state) {
+      state.userLoginInfo = {};
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -50,6 +53,6 @@ export const loginSlice = createSlice({
 export const userRoleSelector = (state) => state.login.userLoginInfo?.userRole;
 export const loginStatusSelector = (state) => state.login.status;
 
-export const { setUserLoginInfo } = loginSlice.actions;
+export const { setUserLoginInfo, removeUserLoginInfo } = loginSlice.actions;
 
 export default loginSlice.reducer;
