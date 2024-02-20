@@ -1,11 +1,37 @@
 import { connection } from "../config/database.js";
 
-export const getUsers = async () => {
+export const getUsers = async (config) => {
   try {
-    const sql = `SELECT * FROM user`;
-    const [results] = await connection.execute(sql);
+    const { page, pageSize } = config;
+
+    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+
+    const sql = `SELECT user_id, name, email, profile_image, role FROM user LIMIT ?, ?`;
+    const values = [`${offset}`, pageSize];
+    const [results] = await connection.execute(sql, values);
 
     return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUsersCount = async () => {
+  try {
+    const sql = "SELECT COUNT(*) FROM user";
+    const [result] = await connection.execute(sql);
+    return result[0]["COUNT(*)"];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserRole = async (userId, { role }) => {
+  try {
+    const sql = `UPDATE user SET role = ? WHERE user_id = ?`;
+    const values = [role, userId];
+
+    await connection.execute(sql, values);
   } catch (error) {
     throw error;
   }
@@ -65,9 +91,8 @@ export const createUser = async (userData) => {
 export const deleteUser = async (userId) => {
   try {
     const sql = `DELETE FROM user WHERE user_id = ?`;
-    const [result] = await connection.execute(sql, [userId]);
-
-    return result;
+    const value = [userId];
+    await connection.execute(sql, value);
   } catch (error) {
     throw error;
   }
