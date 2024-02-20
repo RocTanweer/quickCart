@@ -19,12 +19,6 @@ export const checkForAuthorizationToken = (req, res, next) => {
         if (err) {
           res.status(401);
           throw new Error("Unauthorized - Token expired");
-        } else if (
-          parseInt(req.params.userId) &&
-          tokenPayload.userId !== parseInt(req.params.userId)
-        ) {
-          res.status(403);
-          throw new Error("Forbidden - Token does not belong to this user");
         } else {
           req.user = { ...req.user, userRole: tokenPayload.userRole };
           next();
@@ -44,6 +38,7 @@ export const checkForAdminRole = (req, res, next) => {
       res.status(401);
       throw new Error("Admin access only");
     }
+
     next();
   } catch (error) {
     res.json({ message: error.message });
