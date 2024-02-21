@@ -11,14 +11,19 @@ import {
   Box,
   Avatar,
   Chip,
+  IconButton,
 } from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { FlexBox } from "../../../layouts";
 
 import { userIdSelector } from "../../../state/slices/loginSlice";
 import {
-  updateUserRole,
   usersRoleUpdateAsync,
+  usersDeleteAsync,
+  deleteUser,
+  updateUserRole,
 } from "../../../state/slices/usersSlice";
 
 const UsersTableRow = ({ user }) => {
@@ -39,6 +44,16 @@ const UsersTableRow = ({ user }) => {
         dispatch(updateUserRole(dataForUpdate));
       }
       setAnchorEl(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDltBtn = async () => {
+    try {
+      const userData = { userId: user.user_id };
+      await dispatch(usersDeleteAsync(userData)).unwrap();
+      dispatch(deleteUser(userData));
     } catch (error) {
       console.log(error);
     }
@@ -99,6 +114,13 @@ const UsersTableRow = ({ user }) => {
             {user.role === "ADMIN" ? "USER" : "ADMIN"}
           </MenuItem>
         </Menu>
+      </TableCell>
+      <TableCell>
+        {user.role !== "ADMIN" && (
+          <IconButton color="error" onClick={handleDltBtn}>
+            <DeleteIcon />
+          </IconButton>
+        )}
       </TableCell>
     </TableRow>
   );
