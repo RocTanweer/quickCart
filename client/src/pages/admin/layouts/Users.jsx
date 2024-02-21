@@ -70,6 +70,7 @@ const Users = () => {
             {userTableCols.map((col) => (
               <TableCell key={col}>{col}</TableCell>
             ))}
+            <TableCell />
           </TableRow>
         </TableHead>
         <TableBody>

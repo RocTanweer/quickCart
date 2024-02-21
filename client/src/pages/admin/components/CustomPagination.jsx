@@ -28,7 +28,6 @@ const CustomPagination = ({ page, setPage, totalRows, handleFetchData }) => {
   return (
     <TablePagination
       rowsPerPageOptions={[]}
-      colSpan={userTableCols.length}
       count={totalRows}
       rowsPerPage={ROWS_PER_PAGE}
       page={page}
