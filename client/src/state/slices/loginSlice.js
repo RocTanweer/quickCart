@@ -52,6 +52,7 @@ export const loginSlice = createSlice({
 
 export const userRoleSelector = (state) => state.login.userLoginInfo?.userRole;
 export const loginStatusSelector = (state) => state.login.status;
+export const userIdSelector = (state) => state.login.userLoginInfo?.userId;
 
 export const { setUserLoginInfo, removeUserLoginInfo } = loginSlice.actions;
 
