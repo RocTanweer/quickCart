@@ -49,6 +49,20 @@ export const usersRoleUpdateAsync = createAsyncThunk(
   }
 );
 
+export const usersDeleteAsync = createAsyncThunk(
+  "users/usersDelete",
+  async ({ userId }, { rejectWithValue }) => {
+    try {
+      const response = await axCli.delete(`/api/admin/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
 export const usersSlice = createSlice({
   name: "users",
   initialState: {
@@ -58,6 +72,7 @@ export const usersSlice = createSlice({
       fetchUsersList: { status: "idle", error: null },
       fetchUsersCount: { status: "idle", error: null },
       changeUsersRole: { status: "idle", error: null },
+      deleteUsersDetails: { status: "idle", error: null },
     },
   },
   reducers: {
@@ -69,6 +84,12 @@ export const usersSlice = createSlice({
         }
         return user;
       });
+    },
+    deleteUser: (state, action) => {
+      const { userId } = action.payload;
+      state.usersList = state.usersList.filter(
+        (user) => user.user_id !== userId
+      );
     },
   },
   extraReducers: (builder) => {
@@ -104,6 +125,16 @@ export const usersSlice = createSlice({
       .addCase(usersRoleUpdateAsync.rejected, (state, action) => {
         state.actions.changeUsersRole.status = "failed";
         state.actions.changeUsersRole.error = action.payload;
+      })
+      .addCase(usersDeleteAsync.pending, (state) => {
+        state.actions.deleteUsersDetails.status = "loading";
+      })
+      .addCase(usersDeleteAsync.fulfilled, (state) => {
+        state.actions.deleteUsersDetails.status = "succeeded";
+      })
+      .addCase(usersDeleteAsync.rejected, (state, action) => {
+        state.actions.deleteUsersDetails.status = "failed";
+        state.actions.deleteUsersDetails.error = action.payload;
       });
   },
 });
@@ -115,6 +146,6 @@ export const usersListStatusSelector = (state) =>
 export const usersCountStatusSelector = (state) =>
   state.users.actions.fetchUsersCount.status;
 
-export const { updateUserRole } = usersSlice.actions;
+export const { updateUserRole, deleteUser } = usersSlice.actions;
 
 export default usersSlice.reducer;
