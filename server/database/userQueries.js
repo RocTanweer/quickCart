@@ -2,12 +2,10 @@ import { connection } from "../config/database.js";
 
 export const getUsers = async (config) => {
   try {
-    const { page, pageSize } = config;
-
-    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+    const { offset, rowsCount } = config;
 
     const sql = `SELECT user_id, name, email, profile_image, role FROM user LIMIT ?, ?`;
-    const values = [`${offset}`, pageSize];
+    const values = [offset, rowsCount];
     const [results] = await connection.execute(sql, values);
 
     return results;
