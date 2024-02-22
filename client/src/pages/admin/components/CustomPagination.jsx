@@ -3,9 +3,17 @@ import { useDispatch } from "react-redux";
 
 import { TablePagination } from "@mui/material";
 
-import { ROWS_PER_PAGE, userTableCols } from "../constants/tablesData";
+import { ROWS_PER_PAGE } from "../constants/tablesData";
 
-const CustomPagination = ({ page, setPage, totalRows, handleFetchData }) => {
+const CustomPagination = ({
+  page,
+  setPage,
+  totalRows,
+  handleFetchData,
+  currentRows,
+  deletedUsersCount,
+  setDeletedUsersCount,
+}) => {
   const [latestPage, setLatestPage] = useState(0);
   const dispatch = useDispatch();
 
@@ -13,11 +21,15 @@ const CustomPagination = ({ page, setPage, totalRows, handleFetchData }) => {
     try {
       if (newPage > page && page === latestPage) {
         await dispatch(
-          handleFetchData({ page: newPage + 1, pageSize: ROWS_PER_PAGE })
+          handleFetchData({
+            offset: currentRows,
+            rowsCount: deletedUsersCount + ROWS_PER_PAGE,
+          })
         ).unwrap();
 
         setLatestPage(newPage);
         setPage(newPage);
+        setDeletedUsersCount(0);
       }
       setPage(newPage);
     } catch (error) {

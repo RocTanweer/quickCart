@@ -24,9 +24,10 @@ import {
   usersDeleteAsync,
   deleteUser,
   updateUserRole,
+  decrementUsersCount,
 } from "../../../state/slices/usersSlice";
 
-const UsersTableRow = ({ user }) => {
+const UsersTableRow = ({ user, setDeletedUsersCount }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const userId = useSelector(userIdSelector);
   const dispatch = useDispatch();
@@ -54,6 +55,8 @@ const UsersTableRow = ({ user }) => {
       const userData = { userId: user.user_id };
       await dispatch(usersDeleteAsync(userData)).unwrap();
       dispatch(deleteUser(userData));
+      dispatch(decrementUsersCount());
+      setDeletedUsersCount((prev) => prev + 1);
     } catch (error) {
       console.log(error);
     }
