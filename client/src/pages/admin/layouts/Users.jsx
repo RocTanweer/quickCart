@@ -18,6 +18,7 @@ import {
   usersCountSelector,
   usersListStatusSelector,
   usersCountStatusSelector,
+  availableUsersCountSelector,
 } from "../../../state/slices/usersSlice";
 
 import { TableLoading, UsersTableRow, CustomPagination } from "../components";
@@ -25,9 +26,11 @@ import { ROWS_PER_PAGE, userTableCols } from "../constants/tablesData";
 
 const Users = () => {
   const [page, setPage] = useState(0);
+  const [deletedUsersCount, setDeletedUsersCount] = useState(0);
   const dispatch = useDispatch();
   const usersList = useSelector(usersListSelector);
   const usersCount = useSelector(usersCountSelector);
+  const availableUsersCount = useSelector(availableUsersCountSelector);
   const usersListStatus = useSelector(usersListStatusSelector);
   const usersCountStatus = useSelector(usersCountStatusSelector);
   const isMounted = useRef(true);
@@ -43,7 +46,7 @@ const Users = () => {
       try {
         if (isMounted.current) {
           await dispatch(
-            usersListAsync({ page: 1, pageSize: ROWS_PER_PAGE })
+            usersListAsync({ offSet: 0, rowsCount: ROWS_PER_PAGE })
           ).unwrap();
           await dispatch(usersCountAsync()).unwrap();
         }
@@ -79,7 +82,11 @@ const Users = () => {
           )}
           {usersListStatus === "succeeded" &&
             visibleRows.map((user) => (
-              <UsersTableRow key={user.user_id} user={user} />
+              <UsersTableRow
+                key={user.user_id}
+                user={user}
+                setDeletedUsersCount={setDeletedUsersCount}
+              />
             ))}
         </TableBody>
         <TableFooter>
@@ -89,7 +96,10 @@ const Users = () => {
                 page={page}
                 setPage={setPage}
                 totalRows={usersCount}
+                currentRows={availableUsersCount}
                 handleFetchData={usersListAsync}
+                deletedUsersCount={deletedUsersCount}
+                setDeletedUsersCount={setDeletedUsersCount}
               />
             )}
           </TableRow>
