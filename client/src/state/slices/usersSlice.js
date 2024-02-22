@@ -6,9 +6,9 @@ export const usersListAsync = createAsyncThunk(
   "users/usersList",
   async (config, { rejectWithValue }) => {
     try {
-      const { page, pageSize } = config;
+      const { offset, rowsCount } = config;
       const response = await axCli.get(
-        `/api/admin/users?page=${page}&pageSize=${pageSize}`
+        `/api/admin/users?offset=${offset}&rowsCount=${rowsCount}`
       );
       return response.data;
     } catch (error) {
@@ -91,6 +91,9 @@ export const usersSlice = createSlice({
         (user) => user.user_id !== userId
       );
     },
+    decrementUsersCount: (state) => {
+      state.usersCount -= 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -145,7 +148,10 @@ export const usersListStatusSelector = (state) =>
   state.users.actions.fetchUsersList.status;
 export const usersCountStatusSelector = (state) =>
   state.users.actions.fetchUsersCount.status;
+export const availableUsersCountSelector = (state) =>
+  state.users?.usersList.length;
 
-export const { updateUserRole, deleteUser } = usersSlice.actions;
+export const { updateUserRole, deleteUser, decrementUsersCount } =
+  usersSlice.actions;
 
 export default usersSlice.reducer;
