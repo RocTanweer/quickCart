@@ -3,6 +3,11 @@ import {
   changeUserRole,
   removeUser,
   usersCount,
+  productCategoryList,
+  addProductCategory,
+  editProductCategory,
+  removeProductCategory,
+  productCategoriesCount,
 } from "../controller/adminController.js";
 
 import {
@@ -37,5 +42,39 @@ export default (router) => {
     checkForAuthorizationToken,
     checkForAdminRole,
     removeUser
+  );
+
+  router.get(
+    "/admin/productCategories",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    productCategoryList
+  );
+  router.get(
+    "/admin/productCategories/count",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    productCategoriesCount
+  );
+
+  router.post(
+    "/admin/productCategories",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    addProductCategory
+  );
+
+  router.patch(
+    "/admin/productCategories/:productCategoryId",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    editProductCategory
+  );
+
+  router.delete(
+    "/admin/productCategories/:productCategoryId",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    removeProductCategory
   );
 };
