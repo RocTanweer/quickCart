@@ -11,25 +11,29 @@ const CustomPagination = ({
   totalRows,
   handleFetchData,
   currentRows,
-  deletedUsersCount,
-  setDeletedUsersCount,
+  deletedRowsCount = 0,
+  handleDeletedRowsCount = null,
 }) => {
   const [latestPage, setLatestPage] = useState(0);
   const dispatch = useDispatch();
 
   const handleChangePage = async (event, newPage) => {
     try {
-      if (newPage > page && page === latestPage) {
+      if (
+        newPage > page &&
+        page === latestPage &&
+        (newPage + 1) * ROWS_PER_PAGE > currentRows
+      ) {
         await dispatch(
           handleFetchData({
             offset: currentRows,
-            rowsCount: deletedUsersCount + ROWS_PER_PAGE,
+            rowsCount: deletedRowsCount + ROWS_PER_PAGE,
           })
         ).unwrap();
 
         setLatestPage(newPage);
         setPage(newPage);
-        setDeletedUsersCount(0);
+        if (handleDeletedRowsCount) handleDeletedRowsCount(0);
       }
       setPage(newPage);
     } catch (error) {
