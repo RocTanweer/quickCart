@@ -44,7 +44,7 @@ const Users = () => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        if (isMounted.current) {
+        if (isMounted.current && availableUsersCount === 0) {
           await dispatch(
             usersListAsync({ offSet: 0, rowsCount: ROWS_PER_PAGE })
           ).unwrap();
@@ -98,8 +98,8 @@ const Users = () => {
                 totalRows={usersCount}
                 currentRows={availableUsersCount}
                 handleFetchData={usersListAsync}
-                deletedUsersCount={deletedUsersCount}
-                setDeletedUsersCount={setDeletedUsersCount}
+                deletedRowsCount={deletedUsersCount}
+                handleDeletedRowsCount={setDeletedUsersCount}
               />
             )}
           </TableRow>
