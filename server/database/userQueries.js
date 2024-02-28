@@ -24,17 +24,6 @@ export const getUsersCount = async () => {
   }
 };
 
-export const updateUserRole = async (userId, { role }) => {
-  try {
-    const sql = `UPDATE user SET role = ? WHERE user_id = ?`;
-    const values = [role, userId];
-
-    await connection.execute(sql, values);
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const isThereUser = async (userEmail) => {
   try {
     const sql = `SELECT 1 FROM user WHERE email = ?`;
@@ -96,26 +85,31 @@ export const deleteUser = async (userId) => {
   }
 };
 
-export const updateUser = async (userUpdates) => {
+export const updateUser = async (id, updateDetails) => {
   try {
-    // Expecting userUpdates to handle null cases
-    const { userId, name, email, password, profileImage } = userUpdates;
+    const {
+      name = null,
+      email = null,
+      password = null,
+      profileImage = null,
+      role = null,
+    } = updateDetails;
     const sql = `UPDATE user
         SET 
         name = COALESCE(?, name),
         email = COALESCE(?, email),
         password = COALESCE(?, password),
-        profile_image = COALESCE(?, profile_image)
+        profile_image = COALESCE(?, profile_image),
+        role = COALESCE(?, role)
       WHERE user_id = ?`;
-    const [result] = await connection.execute(sql, [
+    await connection.execute(sql, [
       name,
       email,
       password,
       profileImage,
-      userId,
+      role,
+      id,
     ]);
-
-    return result;
   } catch (error) {
     throw error;
   }
