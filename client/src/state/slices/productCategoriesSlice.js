@@ -7,7 +7,7 @@ export const productCategoriesListAsync = createAsyncThunk(
     try {
       const { offset, rowsCount } = config;
       const response = await axCli.get(
-        `/api/admin/productCategories?offset=${offset}&rowsCount=${rowsCount}`
+        `/api/productCategories?offset=${offset}&rowsCount=${rowsCount}`
       );
 
       return response.data;
@@ -23,7 +23,7 @@ export const productCategoriesCountAsync = createAsyncThunk(
   "productCategories/count",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axCli.get(`/api/admin/productCategories/count`);
+      const response = await axCli.get(`/api/productCategories/count`);
 
       return response.data;
     } catch (error) {
@@ -38,7 +38,7 @@ export const productCategoriesCreateAsync = createAsyncThunk(
   "productCategories/create",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axCli.post(`/api/admin/productCategories`, data);
+      const response = await axCli.post(`/api/productCategories`, data);
 
       return response.data;
     } catch (error) {
@@ -52,10 +52,7 @@ export const productCategoriesUpdateAsync = createAsyncThunk(
   "productCategories/update",
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await axCli.patch(
-        `/api/admin/productCategories/${id}`,
-        data
-      );
+      const response = await axCli.patch(`/api/productCategories/${id}`, data);
 
       return response.data;
     } catch (error) {

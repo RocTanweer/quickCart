@@ -8,7 +8,7 @@ export const usersListAsync = createAsyncThunk(
     try {
       const { offset, rowsCount } = config;
       const response = await axCli.get(
-        `/api/admin/users?offset=${offset}&rowsCount=${rowsCount}`
+        `/api/users?offset=${offset}&rowsCount=${rowsCount}`
       );
       return response.data;
     } catch (error) {
@@ -23,7 +23,7 @@ export const usersCountAsync = createAsyncThunk(
   "users/usersCount",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axCli.get("/api/admin/users/count");
+      const response = await axCli.get("/api/users/count");
       return response.data;
     } catch (error) {
       if (error.response) {
@@ -37,7 +37,7 @@ export const usersRoleUpdateAsync = createAsyncThunk(
   "users/usersRoleUpdate",
   async ({ userId, role }, { rejectWithValue }) => {
     try {
-      const response = await axCli.patch(`/api/admin/users/${userId}`, {
+      const response = await axCli.patch(`/api/users/${userId}`, {
         role,
       });
       return response.data;
@@ -53,7 +53,7 @@ export const usersDeleteAsync = createAsyncThunk(
   "users/usersDelete",
   async ({ userId }, { rejectWithValue }) => {
     try {
-      const response = await axCli.delete(`/api/admin/users/${userId}`);
+      const response = await axCli.delete(`/api/users/${userId}`);
       return response.data;
     } catch (error) {
       if (error.response) {
