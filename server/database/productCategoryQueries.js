@@ -55,13 +55,3 @@ export const updateProductCategory = async (
     throw error;
   }
 };
-
-export const deleteProductCategory = async (productCategoryId) => {
-  try {
-    const sql = "DELETE FROM product_category WHERE id = ?";
-    const value = [productCategoryId];
-    await connection.execute(sql, value);
-  } catch (error) {
-    throw error;
-  }
-};
