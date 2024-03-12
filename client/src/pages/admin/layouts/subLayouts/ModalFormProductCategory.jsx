@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 
 import {
@@ -12,12 +12,14 @@ import {
   Typography,
   Input,
   FormHelperText,
+  CircularProgress,
 } from "@mui/material";
 
 import {
   productCategoriesCreateAsync,
   incrementProductCategoriesCount,
   productCategoriesUpdateAsync,
+  productCategoriesUpdateStatusSelector,
   updateProductCategory,
 } from "../../../../state/slices/productCategoriesSlice";
 
@@ -30,6 +32,9 @@ const ModalFormProductCategory = ({
   formIntState,
 }) => {
   const dispatch = useDispatch();
+  const productCategoriesUpdateStatus = useSelector(
+    productCategoriesUpdateStatusSelector
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -62,6 +67,7 @@ const ModalFormProductCategory = ({
         console.log(error);
       }
     },
+    enableReinitialize: true,
   });
 
   const handleImageChange = (e, setFieldValue) => {
@@ -159,7 +165,11 @@ const ModalFormProductCategory = ({
               variant="contained"
               disabled={formIntState && !formik.dirty}
             >
-              submit
+              {productCategoriesUpdateStatus === "loading" ? (
+                <CircularProgress color="grey" size={24.5} />
+              ) : (
+                "submit"
+              )}
             </Button>
           </DialogActions>
         </Stack>

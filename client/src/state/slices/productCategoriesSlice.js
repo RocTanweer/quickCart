@@ -71,6 +71,7 @@ export const productCategoriesSlice = createSlice({
     actions: {
       fetchProductCategoriesList: { status: "idle", error: null },
       fetchProductCategoriesCount: { status: "idle", error: null },
+      updateProductCategory: { status: "idle", error: null },
       createProductCategory: { status: "idle", error: null },
     },
   },
@@ -125,6 +126,16 @@ export const productCategoriesSlice = createSlice({
       .addCase(productCategoriesCountAsync.rejected, (state, action) => {
         state.actions.fetchProductCategoriesCount.status = "failed";
         state.actions.fetchProductCategoriesCount.error = action.payload;
+      })
+      .addCase(productCategoriesUpdateAsync.pending, (state) => {
+        state.actions.updateProductCategory.status = "loading";
+      })
+      .addCase(productCategoriesUpdateAsync.fulfilled, (state) => {
+        state.actions.updateProductCategory.status = "succeeded";
+      })
+      .addCase(productCategoriesUpdateAsync.rejected, (state, action) => {
+        state.actions.updateProductCategory.status = "failed";
+        state.actions.updateProductCategory.error = action.payload;
       });
   },
 });
@@ -139,6 +150,8 @@ export const productCategoriesCountStatusSelector = (state) =>
   state.productCategories.actions.fetchProductCategoriesCount.status;
 export const availableProductCategoriesCountSelector = (state) =>
   state.productCategories.productCategoriesList.length;
+export const productCategoriesUpdateStatusSelector = (state) =>
+  state.productCategories.actions.updateProductCategory.status;
 
 export const { incrementProductCategoriesCount, updateProductCategory } =
   productCategoriesSlice.actions;
