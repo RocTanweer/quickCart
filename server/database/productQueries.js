@@ -26,8 +26,7 @@ export const createProduct = async (productDetails) => {
       image,
     ];
 
-    const [result] = await connection.execute(sql, values);
-    return result[0];
+    await connection.execute(sql, values);
   } catch (error) {
     throw error;
   }
@@ -36,8 +35,8 @@ export const createProduct = async (productDetails) => {
 export const getProducts = async (conditions) => {
   try {
     const {
-      page,
-      pageSize,
+      offset,
+      rowsCount,
       productCategoryId,
       productBrandId,
       minPrice,
@@ -45,7 +44,6 @@ export const getProducts = async (conditions) => {
       availability,
     } = conditions;
 
-    // later fetch only columns that is required in product list
     let sql = "SELECT id, unit_price, name, image FROM product WHERE 1 = 1";
     const values = [];
 
@@ -64,10 +62,20 @@ export const getProducts = async (conditions) => {
       values.push(minPrice, maxPrice);
     }
 
-    const offset = (parseInt(page) - 1) * parseInt(pageSize);
-
     sql += " LIMIT ?, ?";
-    values.push(`${offset}`, pageSize);
+    values.push(offset, rowsCount);
+    const [results] = await connection.execute(sql, values);
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getProductsAdmin = async (config) => {
+  try {
+    const { offset, rowsCount } = config;
+    const sql = `SELECT * FROM product ORDER BY id LIMIT ?, ? `;
+    const values = [offset, rowsCount];
     const [results] = await connection.execute(sql, values);
     return results;
   } catch (error) {
@@ -95,6 +103,8 @@ export const updateProduct = async (productId, productUpdates) => {
       name = null,
       description = null,
       image = null,
+      productBrandId = null,
+      productCategoryId = null,
     } = productUpdates;
 
     const sql = `UPDATE product
@@ -103,7 +113,9 @@ export const updateProduct = async (productId, productUpdates) => {
     stock_quantity = COALESCE(?, stock_quantity),
     name = COALESCE(?, name),
     description = COALESCE(?, description),
-    image = COALESCE(?, image)
+    image = COALESCE(?, image),
+    product_category_id = COALESCE(?, product_category_id),
+    product_brand_id = COALESCE(?, product_brand_id)
     WHERE id = ?
     `;
     const values = [
@@ -112,11 +124,12 @@ export const updateProduct = async (productId, productUpdates) => {
       name,
       description,
       image,
+      productCategoryId,
+      productBrandId,
       productId,
     ];
 
-    const [result] = await connection.execute(sql, values);
-    return result[0];
+    await connection.execute(sql, values);
   } catch (error) {
     throw error;
   }
@@ -127,8 +140,7 @@ export const deleteProduct = async (productId) => {
     const sql = "DELETE FROM product WHERE id = ?";
     const value = [productId];
 
-    const [result] = await connection.execute(sql, value);
-    return result[0];
+    await connection.execute(sql, value);
   } catch (error) {
     throw error;
   }
