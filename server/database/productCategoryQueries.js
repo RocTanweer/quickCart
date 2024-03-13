@@ -55,3 +55,13 @@ export const updateProductCategory = async (
     throw error;
   }
 };
+
+export const getProductCategoriesName = async () => {
+  try {
+    const sql = "SELECT id, name FROM product_category";
+    const [result] = await connection.execute(sql);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
