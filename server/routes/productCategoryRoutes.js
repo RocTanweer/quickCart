@@ -3,6 +3,7 @@ import {
   addProductCategory,
   editProductCategory,
   productCategoriesCount,
+  productCategoriesName,
 } from "../controller/productCategoryController.js";
 
 import {
@@ -17,6 +18,12 @@ export default (router) => {
     checkForAuthorizationToken,
     checkForAdminRole,
     productCategoriesCount
+  );
+  router.get(
+    "/productCategories/names",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    productCategoriesName
   );
   router.post(
     "/productCategories",
