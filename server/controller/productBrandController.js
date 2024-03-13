@@ -2,6 +2,7 @@ import {
   createProductBrand,
   getProductBrands,
   getProductBrandsCount,
+  getProductBrandsName,
   updateProductBrand,
 } from "../database/productBrandQueries.js";
 
@@ -30,6 +31,15 @@ export const productBrandsCount = async (req, res) => {
   try {
     const brandsCount = await getProductBrandsCount();
     res.status(200).json({ count: brandsCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const productBrandsName = async (req, res) => {
+  try {
+    const brandsName = await getProductBrandsName();
+    res.status(200).json({ brandsName });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
