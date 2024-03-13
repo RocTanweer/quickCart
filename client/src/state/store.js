@@ -6,6 +6,7 @@ import logoutReducer from "./slices/logoutSlice";
 import usersReducer from "./slices/usersSlice";
 import productCategoriesReducer from "./slices/productCategoriesSlice";
 import productBrandsReducer from "./slices/productBrandsSlice";
+import productsReducer from "./slices/productsSlice";
 
 export default configureStore({
   reducer: {
@@ -15,5 +16,6 @@ export default configureStore({
     users: usersReducer,
     productCategories: productCategoriesReducer,
     productBrands: productBrandsReducer,
+    products: productsReducer,
   },
 });
