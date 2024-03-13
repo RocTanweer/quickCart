@@ -3,6 +3,7 @@ import {
   productBrandList,
   productBrandsCount,
   editProductBrand,
+  productBrandsName,
 } from "../controller/productBrandController.js";
 
 import {
@@ -17,6 +18,12 @@ export default (router) => {
     checkForAuthorizationToken,
     checkForAdminRole,
     productBrandsCount
+  );
+  router.get(
+    "/productBrands/names",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    productBrandsName
   );
   router.post(
     "/productBrands",
