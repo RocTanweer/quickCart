@@ -2,6 +2,7 @@ import {
   createProductCategory,
   getProductCategories,
   getProductCategoriesCount,
+  getProductCategoriesName,
   updateProductCategory,
 } from "../database/productCategoryQueries.js";
 
@@ -30,6 +31,15 @@ export const productCategoriesCount = async (req, res) => {
   try {
     const productCategoriesCount = await getProductCategoriesCount();
     res.status(200).json({ count: productCategoriesCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const productCategoriesName = async (req, res) => {
+  try {
+    const categoriesName = await getProductCategoriesName();
+    res.status(200).json({ categoriesName });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
