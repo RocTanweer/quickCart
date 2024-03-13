@@ -5,6 +5,7 @@ import {
   updateProduct,
   deleteProduct,
   getProductsAdmin,
+  getProductsCount,
 } from "../database/productQueries.js";
 
 export const getProductList = async (req, res) => {
@@ -24,6 +25,15 @@ export const getProductListAdmin = async (req, res) => {
     res.status(200).json({ products });
   } catch (error) {
     res.json({ message: error.message });
+  }
+};
+
+export const productsCount = async (req, res) => {
+  try {
+    const productsCount = await getProductsCount();
+    res.status(200).json({ count: productsCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
