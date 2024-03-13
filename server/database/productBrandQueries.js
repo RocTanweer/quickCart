@@ -53,3 +53,13 @@ export const updateProductBrand = async (
     throw error;
   }
 };
+
+export const getProductBrandsName = async () => {
+  try {
+    const sql = "SELECT id, name FROM product_brand";
+    const [result] = await connection.execute(sql);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
