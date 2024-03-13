@@ -83,6 +83,16 @@ export const getProductsAdmin = async (config) => {
   }
 };
 
+export const getProductsCount = async () => {
+  try {
+    const sql = "SELECT COUNT(*) FROM product";
+    const [result] = await connection.execute(sql);
+    return result[0]["COUNT(*)"];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProductById = async (productId) => {
   try {
     const sql = "SELECT * FROM product WHERE id = ?";
