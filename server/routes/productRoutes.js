@@ -5,6 +5,7 @@ import {
   getProductDetails,
   updateProductDetails,
   removeProductDetails,
+  productsCount,
 } from "../controller/productController.js";
 import {
   checkForAuthorizationToken,
@@ -18,6 +19,12 @@ export default (router) => {
     checkForAuthorizationToken,
     checkForAdminRole,
     getProductListAdmin
+  );
+  router.get(
+    "/products/count",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    productsCount
   );
   router.post(
     "/products",
