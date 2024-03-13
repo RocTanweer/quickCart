@@ -1,5 +1,6 @@
 import {
   getProductList,
+  getProductListAdmin,
   addProduct,
   getProductDetails,
   updateProductDetails,
@@ -12,6 +13,12 @@ import {
 
 export default (router) => {
   router.get("/products", getProductList);
+  router.get(
+    "/products/admin",
+    checkForAuthorizationToken,
+    checkForAdminRole,
+    getProductListAdmin
+  );
   router.post(
     "/products",
     checkForAuthorizationToken,
