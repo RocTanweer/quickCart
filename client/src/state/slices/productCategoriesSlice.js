@@ -63,14 +63,31 @@ export const productCategoriesUpdateAsync = createAsyncThunk(
   }
 );
 
+export const productCategoriesNamesAsync = createAsyncThunk(
+  "productCategories/names",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axCli.get(`/api/productCategories/names`);
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
 export const productCategoriesSlice = createSlice({
   name: "productCategories",
   initialState: {
     productCategoriesList: [],
     productCategoriesCount: null,
+    productCategoriesNames: [],
     actions: {
       fetchProductCategoriesList: { status: "idle", error: null },
       fetchProductCategoriesCount: { status: "idle", error: null },
+      fetchProductCategoriesNames: { status: "idle", error: null },
       updateProductCategory: { status: "idle", error: null },
       createProductCategory: { status: "idle", error: null },
     },
@@ -136,6 +153,17 @@ export const productCategoriesSlice = createSlice({
       .addCase(productCategoriesUpdateAsync.rejected, (state, action) => {
         state.actions.updateProductCategory.status = "failed";
         state.actions.updateProductCategory.error = action.payload;
+      })
+      .addCase(productCategoriesNamesAsync.pending, (state) => {
+        state.actions.fetchProductCategoriesNames.status = "loading";
+      })
+      .addCase(productCategoriesNamesAsync.fulfilled, (state, action) => {
+        state.actions.fetchProductCategoriesNames.status = "succeeded";
+        state.productCategoriesNames = action.payload.categoriesName;
+      })
+      .addCase(productCategoriesNamesAsync.rejected, (state, action) => {
+        state.actions.fetchProductCategoriesNames.status = "failed";
+        state.actions.fetchProductCategoriesNames.error = action.payload;
       });
   },
 });
@@ -152,6 +180,8 @@ export const availableProductCategoriesCountSelector = (state) =>
   state.productCategories.productCategoriesList.length;
 export const productCategoriesUpdateStatusSelector = (state) =>
   state.productCategories.actions.updateProductCategory.status;
+export const productCategoriesNamesSelector = (state) =>
+  state.productCategories.productCategoriesNames;
 
 export const { incrementProductCategoriesCount, updateProductCategory } =
   productCategoriesSlice.actions;
