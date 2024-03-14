@@ -64,14 +64,31 @@ export const productBrandsUpdateAsync = createAsyncThunk(
   }
 );
 
+export const productBrandsNamesAsync = createAsyncThunk(
+  "productBrands/names",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axCli.get(`/api/productBrands/names`);
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
 export const productBrandsSlice = createSlice({
   name: "productBrands",
   initialState: {
     productBrandsList: [],
     productBrandsCount: null,
+    productBrandsNames: [],
     actions: {
       fetchProductBrandsList: { status: "idle", error: null },
       fetchProductBrandsCount: { status: "idle", error: null },
+      fetchProductBrandsNames: { status: "idle", error: null },
       createProductBrand: { status: "idle", error: null },
       updateProductBrand: { status: "idle", error: null },
     },
@@ -133,6 +150,17 @@ export const productBrandsSlice = createSlice({
       .addCase(productBrandsUpdateAsync.rejected, (state, action) => {
         state.actions.updateProductBrand.status = "failed";
         state.actions.updateProductBrand.error = action.payload;
+      })
+      .addCase(productBrandsNamesAsync.pending, (state) => {
+        state.actions.fetchProductBrandsNames.status = "loading";
+      })
+      .addCase(productBrandsNamesAsync.fulfilled, (state, action) => {
+        state.actions.fetchProductBrandsNames.status = "succeeded";
+        state.productBrandsNames = action.payload.brandsName;
+      })
+      .addCase(productBrandsNamesAsync.rejected, (state, action) => {
+        state.actions.fetchProductBrandsNames.status = "failed";
+        state.actions.fetchProductBrandsNames.error = action.payload;
       });
   },
 });
@@ -149,6 +177,8 @@ export const availableProductBrandsCountSelector = (state) =>
   state.productBrands.productBrandsList.length;
 export const productBrandsUpdateStatusSelector = (state) =>
   state.productBrands.actions.updateProductBrand.status;
+export const productBrandsNamesSelector = (state) =>
+  state.productBrands.productBrandsNames;
 
 export const { incrementproductBrandsCount, updateProductBrand } =
   productBrandsSlice.actions;
