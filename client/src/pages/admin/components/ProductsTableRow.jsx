@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { TableRow, TableCell, Avatar, IconButton } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DrawerFormProduct from "../layouts/subLayouts/DrawerFormProduct";
+import {
+  deleteProduct,
+  productsDeleteAsync,
+} from "../../../state/slices/productsSlice";
 
-const ProductsTableRow = ({ product }) => {
+const ProductsTableRow = ({ product, setDeletedProductsCount }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleDrawerOpen = () => {
     setDrawerOpen(true);
@@ -15,6 +21,16 @@ const ProductsTableRow = ({ product }) => {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false);
+  };
+
+  const handleDeleteBtn = async () => {
+    try {
+      await dispatch(productsDeleteAsync(product.id)).unwrap();
+      dispatch(deleteProduct({ id: product.id }));
+      setDeletedProductsCount((prev) => prev + 1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -45,7 +61,7 @@ const ProductsTableRow = ({ product }) => {
         />
       </TableCell>
       <TableCell sx={{ padding: "0px" }}>
-        <IconButton color="error" onClick={null}>
+        <IconButton color="error" onClick={handleDeleteBtn}>
           <DeleteIcon />
         </IconButton>
       </TableCell>
