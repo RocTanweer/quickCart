@@ -18,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { FlexBox } from "../../../layouts";
 
 import { productsTableCols, ROWS_PER_PAGE } from "../constants/tablesData";
+import tabNames from "../constants/tabNames";
 import {
   availableProductsCountSelector,
   productsCountAsync,
@@ -33,7 +34,7 @@ import {
   ProductsTableRow,
 } from "../components";
 
-const ProductList = () => {
+const ProductList = ({ handleActiveSec, setBtnText }) => {
   const [page, setPage] = useState(0);
   const dispatch = useDispatch();
   const productsList = useSelector(productsListSelector);
@@ -66,6 +67,11 @@ const ProductList = () => {
     fetchProductsList();
   }, [dispatch, productsList]);
 
+  const handleAddBtn = () => {
+    handleActiveSec(tabNames.product.create);
+    setBtnText(tabNames.product.create);
+  };
+
   const visibleRows = productsList.slice(
     page * ROWS_PER_PAGE,
     (page + 1) * ROWS_PER_PAGE
@@ -76,7 +82,7 @@ const ProductList = () => {
       sx={{ maxWidth: "500px", width: "100%", minHeight: "500px", mt: "40px" }}
     >
       <FlexBox csx={{ justifyContent: "flex-end", mb: "20px" }}>
-        <Button variant="outlined" endIcon={<AddIcon />} onClick={null}>
+        <Button variant="outlined" endIcon={<AddIcon />} onClick={handleAddBtn}>
           Add
         </Button>
       </FlexBox>

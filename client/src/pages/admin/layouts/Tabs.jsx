@@ -9,9 +9,8 @@ import { FlexBox } from "../../../layouts";
 
 import tabNames from "../constants/tabNames";
 
-const Tabs = ({ activeSec, handleActiveSec }) => {
+const Tabs = ({ activeSec, handleActiveSec, btnText, setBtnText }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [btnText, setBtnText] = useState("Product");
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
