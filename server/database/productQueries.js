@@ -3,10 +3,10 @@ import { connection } from "../config/database.js";
 export const createProduct = async (productDetails) => {
   try {
     const {
-      productCategoryId,
-      productBrandId,
-      unitPrice,
-      stockQuantity,
+      category_id,
+      brand_id,
+      unit_price,
+      stock_quantity,
       name,
       description,
       image,
@@ -17,10 +17,10 @@ export const createProduct = async (productDetails) => {
        VALUES (?, ?, ?, ?, ?, ?, ?)
        `;
     const values = [
-      productCategoryId,
-      productBrandId,
-      unitPrice,
-      stockQuantity,
+      category_id,
+      brand_id,
+      unit_price,
+      stock_quantity,
       name,
       description,
       image,

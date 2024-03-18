@@ -106,8 +106,8 @@ export const productsSlice = createSlice({
       });
     },
     deleteProduct: (state, action) => {
-      const { id } = action;
-      state.productsList = state.productsCount.filter(
+      const { id } = action.payload;
+      state.productsList = state.productsList.filter(
         (product) => product.id !== id
       );
     },
