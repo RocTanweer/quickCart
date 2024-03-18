@@ -111,6 +111,9 @@ export const productsSlice = createSlice({
         (product) => product.id !== id
       );
     },
+    decrementProductsCount: (state) => {
+      state.productsCount -= 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -183,7 +186,11 @@ export const productCreateStatusSelector = (state) =>
 export const productUpdateStatusSelector = (state) =>
   state.products.actions.updateProduct.status;
 
-export const { incrementProductsCount, updateProduct, deleteProduct } =
-  productsSlice.actions;
+export const {
+  incrementProductsCount,
+  updateProduct,
+  deleteProduct,
+  decrementProductsCount,
+} = productsSlice.actions;
 
 export default productsSlice.reducer;

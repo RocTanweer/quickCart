@@ -7,6 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DrawerFormProduct from "../layouts/subLayouts/DrawerFormProduct";
 import {
+  decrementProductsCount,
   deleteProduct,
   productsDeleteAsync,
 } from "../../../state/slices/productsSlice";
@@ -27,6 +28,7 @@ const ProductsTableRow = ({ product, setDeletedProductsCount }) => {
     try {
       await dispatch(productsDeleteAsync(product.id)).unwrap();
       dispatch(deleteProduct({ id: product.id }));
+      dispatch(decrementProductsCount());
       setDeletedProductsCount((prev) => prev + 1);
     } catch (error) {
       console.log(error);
