@@ -178,6 +178,10 @@ export const productsListStatusSelector = (state) =>
   state.products.actions.fetchProductsList.status;
 export const productsCountStatusSelector = (state) =>
   state.products.actions.fetchProductsCount.status;
+export const productCreateStatusSelector = (state) =>
+  state.products.actions.createProduct.status;
+export const productUpdateStatusSelector = (state) =>
+  state.products.actions.updateProduct.status;
 
 export const { incrementProductsCount, updateProduct, deleteProduct } =
   productsSlice.actions;
