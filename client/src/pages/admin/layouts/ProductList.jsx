@@ -36,6 +36,7 @@ import {
 
 const ProductList = ({ handleActiveSec, setBtnText }) => {
   const [page, setPage] = useState(0);
+  const [deletedProductsCount, setDeletedProductsCount] = useState(0);
   const dispatch = useDispatch();
   const productsList = useSelector(productsListSelector);
   const productsListStatus = useSelector(productsListStatusSelector);
@@ -102,7 +103,11 @@ const ProductList = ({ handleActiveSec, setBtnText }) => {
               productsListStatus === "loading") && <TableLoading />}
             {productsListStatus === "succeeded" &&
               visibleRows.map((product) => (
-                <ProductsTableRow key={product.id} product={product} />
+                <ProductsTableRow
+                  key={product.id}
+                  product={product}
+                  setDeletedProductsCount={setDeletedProductsCount}
+                />
               ))}
           </TableBody>
         </Table>
@@ -117,6 +122,8 @@ const ProductList = ({ handleActiveSec, setBtnText }) => {
                 totalRows={productsCount}
                 handleFetchData={productsListAsync}
                 currentRows={availableProductsCount}
+                deletedRowsCount={deletedProductsCount}
+                handleDeletedRowsCount={setDeletedProductsCount}
               />
             )}
           </TableRow>
