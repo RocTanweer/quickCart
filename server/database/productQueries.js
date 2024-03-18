@@ -74,7 +74,14 @@ export const getProducts = async (conditions) => {
 export const getProductsAdmin = async (config) => {
   try {
     const { offset, rowsCount } = config;
-    const sql = `SELECT * FROM product ORDER BY id LIMIT ?, ? `;
+    // const sql = `SELECT * FROM product p ORDER BY id LIMIT ?, ? `;
+    const sql = `SELECT p.id, p.image, p.name, p.description, p.unit_price, p.stock_quantity, pc.name AS category_name, pc.id AS category_id, pb.name AS brand_name, pb.id AS brand_id 
+      FROM product p
+      JOIN product_category pc ON p.product_category_id = pc.id
+      JOIN product_brand pb ON p.product_brand_id = pb.id
+      ORDER BY p.id
+      LIMIT ?, ?
+    `;
     const values = [offset, rowsCount];
     const [results] = await connection.execute(sql, values);
     return results;
@@ -108,13 +115,13 @@ export const getProductById = async (productId) => {
 export const updateProduct = async (productId, productUpdates) => {
   try {
     const {
-      unitPrice = null,
-      stockQuantity = null,
+      unit_price = null,
+      stock_quantity = null,
       name = null,
       description = null,
       image = null,
-      productBrandId = null,
-      productCategoryId = null,
+      brand_id = null,
+      category_id = null,
     } = productUpdates;
 
     const sql = `UPDATE product
@@ -129,13 +136,13 @@ export const updateProduct = async (productId, productUpdates) => {
     WHERE id = ?
     `;
     const values = [
-      unitPrice,
-      stockQuantity,
+      unit_price,
+      stock_quantity,
       name,
       description,
       image,
-      productCategoryId,
-      productBrandId,
+      category_id,
+      brand_id,
       productId,
     ];
 
