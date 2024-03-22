@@ -15,12 +15,16 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+import { fill } from "@cloudinary/url-gen/actions/resize";
+import { cld, uploadPreset } from "../../../../lib/cloudinaryInstance";
+
 import {
   productCategoriesCreateAsync,
   incrementProductCategoriesCount,
   productCategoriesUpdateAsync,
   productCategoriesUpdateStatusSelector,
   updateProductCategory,
+  productCategoryImageUpload,
 } from "../../../../state/slices/productCategoriesSlice";
 
 import { FlexBox } from "../../../../layouts";
@@ -39,7 +43,12 @@ const ModalFormProductCategory = ({
   const formik = useFormik({
     initialValues: {
       name: formIntState ? formIntState.name : "",
-      thumbnail: formIntState ? formIntState.thumbnail : "",
+      thumbnail: formIntState
+        ? cld
+            .image(formIntState?.thumbnail)
+            .resize(fill().width(320).height(200))
+            .toURL()
+        : "",
     },
     onSubmit: async (values) => {
       try {
@@ -48,9 +57,19 @@ const ModalFormProductCategory = ({
             formik.setFieldError("thumbnail", "Please choose an image");
             return;
           }
+
+          const imageUploadData = {
+            upload_preset: uploadPreset,
+            file: values.thumbnail,
+          };
+
+          const imgUploadResult = await dispatch(
+            productCategoryImageUpload(imageUploadData)
+          ).unwrap();
+
           const data = {
             name: values.name,
-            thumbnail: "https://google.com",
+            thumbnail: imgUploadResult.public_id,
           };
           await dispatch(productCategoriesCreateAsync(data)).unwrap();
           dispatch(incrementProductCategoriesCount());
@@ -59,6 +78,18 @@ const ModalFormProductCategory = ({
             id: formIntState.id,
             data: filterKeyValuePair(values, formIntState),
           };
+          if (updateDetails.data.thumbnail) {
+            const imageUploadData = {
+              upload_preset: uploadPreset,
+              file: values.thumbnail,
+            };
+
+            const imgUploadResult = await dispatch(
+              productCategoryImageUpload(imageUploadData)
+            ).unwrap();
+            updateDetails.data.thumbnail = imgUploadResult.public_id;
+          }
+
           await dispatch(productCategoriesUpdateAsync(updateDetails)).unwrap();
           dispatch(updateProductCategory(updateDetails));
         }
@@ -70,13 +101,12 @@ const ModalFormProductCategory = ({
     enableReinitialize: true,
   });
 
-  const handleImageChange = (e, setFieldValue) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFieldValue("thumbnail", reader.result);
+        formik.setFieldValue("thumbnail", reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -134,7 +164,7 @@ const ModalFormProductCategory = ({
                 name={"thumbnail"}
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleImageChange(e, formik.setFieldValue)}
+                onChange={(e) => handleImageChange(e)}
                 sx={{ display: "none" }}
               />
               <label htmlFor="image-input">
