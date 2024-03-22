@@ -13,6 +13,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+import { cld, uploadPreset } from "../../../lib/cloudinaryInstance";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+
 import { FlexBox } from "../../../layouts";
 import { newProductFormValSch } from "../../../lib/yupSchemas";
 import {
@@ -27,6 +30,7 @@ import {
   productCreateStatusSelector,
   productUpdateStatusSelector,
   productsCreateAsync,
+  productsImageUpload,
   productsUpdateAsync,
   updateProduct,
 } from "../../../state/slices/productsSlice";
@@ -78,7 +82,13 @@ const ProductForm = ({ formIntState, handleDrawerClose }) => {
 
   const formik = useFormik({
     initialValues: formIntState
-      ? formIntState
+      ? {
+          ...formIntState,
+          image: cld
+            .image(formIntState.image)
+            .resize(fill().width(200).height(200))
+            .toURL(),
+        }
       : {
           name: "",
           description: "",
@@ -91,7 +101,14 @@ const ProductForm = ({ formIntState, handleDrawerClose }) => {
     onSubmit: async (values) => {
       try {
         if (!formIntState) {
-          const data = { ...values, image: "https://google.com" };
+          const imageUploadData = {
+            file: values.image,
+            upload_preset: uploadPreset,
+          };
+          const imageUploadResult = await dispatch(
+            productsImageUpload(imageUploadData)
+          ).unwrap();
+          const data = { ...values, image: imageUploadResult.public_id };
           await dispatch(productsCreateAsync(data)).unwrap();
           handleResetForm();
         } else {
@@ -99,6 +116,17 @@ const ProductForm = ({ formIntState, handleDrawerClose }) => {
             id: formIntState.id,
             data: filterKeyValuePair(values, formIntState),
           };
+
+          if (updateDetails.data.image) {
+            const imageUploadData = {
+              file: values.image,
+              upload_preset: uploadPreset,
+            };
+            const imageUploadResult = await dispatch(
+              productsImageUpload(imageUploadData)
+            ).unwrap();
+            updateDetails.data.image = imageUploadResult.public_id;
+          }
           await dispatch(productsUpdateAsync(updateDetails)).unwrap();
 
           if (updateDetails.data.category_id) {
