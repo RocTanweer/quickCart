@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axCli } from "../../lib/axiosClient";
+import axios from "axios";
+import { cn } from "../../lib/cloudinaryInstance";
 
 export const productsListAsync = createAsyncThunk(
   "products/list",
@@ -70,6 +72,23 @@ export const productsDeleteAsync = createAsyncThunk(
     try {
       const response = await axCli.delete(`/api/products/${id}`);
 
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
+export const productsImageUpload = createAsyncThunk(
+  "products/imageUpload",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cn}/upload`,
+        data
+      );
       return response.data;
     } catch (error) {
       if (error.response) {
