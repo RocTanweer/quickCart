@@ -12,6 +12,9 @@ import {
   productsDeleteAsync,
 } from "../../../state/slices/productsSlice";
 
+import { cld } from "../../../lib/cloudinaryInstance";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+
 const ProductsTableRow = ({ product, setDeletedProductsCount }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
@@ -41,7 +44,10 @@ const ProductsTableRow = ({ product, setDeletedProductsCount }) => {
       <TableCell>
         <Avatar
           alt={product.name}
-          src={product.image}
+          src={cld
+            .image(product.image)
+            .resize(fill().width(200).height(200))
+            .toURL()}
           variant="square"
           sx={{ borderRadius: "11px", width: "70px", height: "70px" }}
         />
@@ -56,11 +62,13 @@ const ProductsTableRow = ({ product, setDeletedProductsCount }) => {
         <IconButton onClick={handleDrawerOpen}>
           <EditIcon />
         </IconButton>
-        <DrawerFormProduct
-          open={drawerOpen}
-          handleClose={handleDrawerClose}
-          productDetails={product}
-        />
+        {drawerOpen ? (
+          <DrawerFormProduct
+            open={drawerOpen}
+            handleClose={handleDrawerClose}
+            productDetails={product}
+          />
+        ) : null}
       </TableCell>
       <TableCell sx={{ padding: "0px" }}>
         <IconButton color="error" onClick={handleDeleteBtn}>
