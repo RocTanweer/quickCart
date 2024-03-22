@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { TableRow, TableCell, Avatar, IconButton } from "@mui/material";
 
+import { cld } from "../../../lib/cloudinaryInstance";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+
 import EditIcon from "@mui/icons-material/Edit";
 import { ModalFormProductCategory } from "../layouts/subLayouts";
 
@@ -20,9 +23,12 @@ const ProductCategoriesTableRow = ({ category }) => {
       <TableCell>
         <Avatar
           alt={`${category.name} image`}
-          src={null}
+          src={cld
+            .image(category.thumbnail)
+            .resize(fill().width(200).height(200))
+            .toURL()}
           variant="square"
-          sx={{ borderRadius: "11px", width: "50px", height: "50px" }}
+          sx={{ borderRadius: "11px", width: "70px", height: "70px" }}
         />
       </TableCell>
       <TableCell>{category.name}</TableCell>
