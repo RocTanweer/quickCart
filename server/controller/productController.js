@@ -10,9 +10,9 @@ import {
 
 export const getProductList = async (req, res) => {
   try {
-    const products = await getProducts(req.query);
+    const response = await getProducts(req.query);
 
-    res.status(200).json({ products });
+    res.status(200).json(response);
   } catch (error) {
     res.json({ message: error.message });
   }

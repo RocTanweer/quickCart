@@ -44,50 +44,57 @@ export const getProducts = async (conditions) => {
       availability,
     } = conditions;
 
-    let sql = "SELECT id, unit_price, name, image FROM product WHERE 1 = 1";
+    let sqlResult =
+      "SELECT id, unit_price, name, image FROM product WHERE 1 = 1";
+    let sqlCount = "SELECT COUNT(*) FROM product WHERE 1 = 1";
+    let sqlFilters = "";
     const values = [];
 
     if (productCategoryId) {
       if (Array.isArray(productCategoryId)) {
-        sql += " AND";
+        sqlFilters += " AND";
         productCategoryId.forEach((id, i, array) => {
-          sql += " product_category_id = ?";
+          sqlFilters += " product_category_id = ?";
           if (i !== array.length - 1) {
-            sql += " OR";
+            sqlFilters += " OR";
           }
         });
         values.push(...productCategoryId);
       } else {
-        sql += " AND product_category_id = ?";
+        sqlFilters += " AND product_category_id = ?";
         values.push(productCategoryId);
       }
     }
     if (productBrandId) {
       if (Array.isArray(productBrandId)) {
-        sql += " AND";
+        sqlFilters += " AND";
         productBrandId.forEach((id, i, array) => {
-          sql += " product_brand_id = ?";
+          sqlFilters += " product_brand_id = ?";
           if (i !== array.length - 1) {
-            sql += " OR";
+            sqlFilters += " OR";
           }
         });
         values.push(...productBrandId);
       } else {
-        sql += " AND product_brand_id = ?";
+        sqlFilters += " AND product_brand_id = ?";
         values.push(productBrandId);
       }
     }
-    if (availability) sql += " AND stock_quantity > 0";
+    if (availability) sqlFilters += " AND stock_quantity > 0";
 
     if (minPrice && maxPrice) {
-      sql += " AND unit_price >= ? AND unit_price <= ?";
+      sqlFilters += " AND unit_price >= ? AND unit_price <= ?";
       values.push(minPrice, maxPrice);
     }
 
-    sql += " LIMIT ?, ?";
+    sqlResult += sqlFilters + " LIMIT ?, ?";
     values.push(offset, rowsCount);
-    const [results] = await connection.execute(sql, values);
-    return results;
+    const [results] = await connection.execute(sqlResult, values);
+
+    sqlCount += sqlFilters;
+    const [result] = await connection.execute(sqlCount, values);
+
+    return { products: results, count: result[0]["COUNT(*)"] };
   } catch (error) {
     throw error;
   }
