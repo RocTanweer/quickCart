@@ -12,7 +12,6 @@ export const productsPublicAsync = createAsyncThunk(
         `/api/products/?offset=${offset}&rowsCount=${rowsCount}`
       );
       console.log(response.data);
-
       return response.data;
     } catch (error) {
       if (error.response) {
@@ -41,6 +40,7 @@ export const productsPublicSlice = createSlice({
       .addCase(productsPublicAsync.fulfilled, (state, action) => {
         state.actions.fetchProductsList.status = "succeeded";
         state.products.push(...action.payload.products);
+        state.productsCount = action.payload.count;
       })
       .addCase(productsPublicAsync.rejected, (state, action) => {
         state.actions.fetchProductsList.status = "failed";
@@ -50,6 +50,8 @@ export const productsPublicSlice = createSlice({
 });
 
 export const productsPublicSelector = (state) => state.productsPublic.products;
+export const productsCountSelector = (state) =>
+  state.productsPublic.productsCount;
 
 export const productsPublicStatusSelector = (state) =>
   state.productsPublic.actions.fetchProductsList.status;

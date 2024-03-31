@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -11,8 +11,11 @@ import {
   CardActionArea,
   CardActions,
   Typography,
+  IconButton,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { cld } from "../../lib/cloudinaryInstance";
 import { fill } from "@cloudinary/url-gen/actions/resize";
@@ -20,14 +23,17 @@ import { fill } from "@cloudinary/url-gen/actions/resize";
 import { FlexBox } from "../../layouts";
 import {
   PRODUCT_ITEMS_PER_PAGE,
+  productsCountSelector,
   productsPublicAsync,
   productsPublicSelector,
   productsPublicStatusSelector,
 } from "../../state/slices/productsPublicSlice";
 
 const Products = () => {
+  const [page, setPage] = useState(1);
   const dispatch = useDispatch();
   const products = useSelector(productsPublicSelector);
+  const productsCount = useSelector(productsCountSelector);
   const productsStatus = useSelector(productsPublicStatusSelector);
 
   const isMounted = useRef(true);
@@ -56,6 +62,34 @@ const Products = () => {
     fetchProducts();
   }, [dispatch, products]);
 
+  const handleLftPgBtn = () => {
+    setPage((prev) => prev - 1);
+  };
+
+  const handleRgtPgBtn = async () => {
+    try {
+      if (
+        (page + 1) * PRODUCT_ITEMS_PER_PAGE > products.length &&
+        products.length !== productsCount
+      ) {
+        await dispatch(
+          productsPublicAsync({
+            offset: products.length,
+            rowsCount: PRODUCT_ITEMS_PER_PAGE,
+          })
+        ).unwrap();
+      }
+      setPage((prev) => prev + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const visibleProducts = products.slice(
+    (page - 1) * PRODUCT_ITEMS_PER_PAGE,
+    page * PRODUCT_ITEMS_PER_PAGE
+  );
+
   return (
     <Box sx={{ maxWidth: "1000px", mx: "auto", mt: "50px" }}>
       <Grid container columnSpacing={2}>
@@ -64,12 +98,12 @@ const Products = () => {
           <FlexBox csx={{ justifyContent: "flex-end" }}>
             <p>Sort By</p>
           </FlexBox>
-          <Grid container columnSpacing={2} rowSpacing={4}>
+          <Grid container columnSpacing={2} rowSpacing={4} sx={{ mb: "20px" }}>
             {(productsStatus === "idle" || productsStatus === "loading") && (
               <Typography>Loading...</Typography>
             )}
             {productsStatus === "succeeded" &&
-              products.map((product) => (
+              visibleProducts.map((product) => (
                 <Grid item md={4} key={product.id}>
                   <Card>
                     <CardActionArea>
@@ -112,7 +146,25 @@ const Products = () => {
               ))}
           </Grid>
           <FlexBox csx={{ justifyContent: "flex-end" }}>
-            <p>Pagination</p>
+            <Typography>
+              {(page - 1) * PRODUCT_ITEMS_PER_PAGE + 1}-
+              {(page - 1) * PRODUCT_ITEMS_PER_PAGE +
+                1 +
+                visibleProducts.length -
+                1}{" "}
+              of {productsCount}
+            </Typography>
+            <IconButton disabled={page === 1} onClick={handleLftPgBtn}>
+              <ChevronLeftIcon />
+            </IconButton>
+            <IconButton
+              disabled={
+                page === Math.ceil(productsCount / PRODUCT_ITEMS_PER_PAGE)
+              }
+              onClick={handleRgtPgBtn}
+            >
+              <ChevronRightIcon />
+            </IconButton>
           </FlexBox>
         </Grid>
       </Grid>
