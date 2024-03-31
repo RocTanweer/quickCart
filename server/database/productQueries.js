@@ -48,12 +48,34 @@ export const getProducts = async (conditions) => {
     const values = [];
 
     if (productCategoryId) {
-      sql += " AND product_category_id = ?";
-      values.push(productCategoryId);
+      if (Array.isArray(productCategoryId)) {
+        sql += " AND";
+        productCategoryId.forEach((id, i, array) => {
+          sql += " product_category_id = ?";
+          if (i !== array.length - 1) {
+            sql += " OR";
+          }
+        });
+        values.push(...productCategoryId);
+      } else {
+        sql += " AND product_category_id = ?";
+        values.push(productCategoryId);
+      }
     }
     if (productBrandId) {
-      sql += " AND product_brand_id = ?";
-      values.push(productBrandId);
+      if (Array.isArray(productBrandId)) {
+        sql += " AND";
+        productBrandId.forEach((id, i, array) => {
+          sql += " product_brand_id = ?";
+          if (i !== array.length - 1) {
+            sql += " OR";
+          }
+        });
+        values.push(...productBrandId);
+      } else {
+        sql += " AND product_brand_id = ?";
+        values.push(productBrandId);
+      }
     }
     if (availability) sql += " AND stock_quantity > 0";
 
