@@ -136,6 +136,7 @@ const ModalFormProductCategory = ({
             label="Category Name"
             name={"name"}
             variant="outlined"
+            autoComplete="off"
             onChange={formik.handleChange}
             value={formik.values.name}
             required

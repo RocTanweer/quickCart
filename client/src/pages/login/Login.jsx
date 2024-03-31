@@ -110,6 +110,7 @@ export const Login = () => {
               name={"email"}
               id={"email"}
               fullWidth
+              autoComplete="off"
               onChange={formik.handleChange}
               error={formik.errors.email && formik.touched.email}
               helperText={

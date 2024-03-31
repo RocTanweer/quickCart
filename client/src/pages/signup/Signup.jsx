@@ -83,6 +83,7 @@ export const Signup = () => {
               id={"name"}
               fullWidth
               required
+              autoComplete="off"
               onChange={formik.handleChange}
             />
           </Box>
@@ -94,6 +95,7 @@ export const Signup = () => {
               id={"email"}
               fullWidth
               required
+              autoComplete="off"
               onChange={formik.handleChange}
               error={formik.errors.email && formik.touched.email}
               helperText={

@@ -177,6 +177,7 @@ const ProductForm = ({ formIntState, handleDrawerClose }) => {
           fullWidth
           required
           value={formik.values.name}
+          autoComplete="off"
           onChange={formik.handleChange}
           error={formik.errors.name && formik.touched.name}
           helperText={
