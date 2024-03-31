@@ -92,7 +92,12 @@ const ProductList = ({ handleActiveSec, setBtnText }) => {
           <TableHead>
             <TableRow>
               {productsTableCols.map((col, i) => (
-                <TableCell key={i}>{col}</TableCell>
+                <TableCell
+                  key={i}
+                  sx={{ minWidth: i === 3 || i === 2 ? "200px" : 0 }}
+                >
+                  {col}
+                </TableCell>
               ))}
               <TableCell></TableCell>
               <TableCell></TableCell>

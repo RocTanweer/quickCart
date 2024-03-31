@@ -49,11 +49,23 @@ const ProductsTableRow = ({ product, setDeletedProductsCount }) => {
             .resize(fill().width(200).height(200))
             .toURL()}
           variant="square"
-          sx={{ borderRadius: "11px", width: "70px", height: "70px" }}
+          sx={{
+            borderRadius: "11px",
+            width: "70px",
+            height: "70px",
+          }}
         />
       </TableCell>
-      <TableCell>{product.name}</TableCell>
-      <TableCell>{product.description}</TableCell>
+      <TableCell>
+        {product.name.length > 52
+          ? `${product.name.slice(0, 53)}...`
+          : product.name}
+      </TableCell>
+      <TableCell>
+        {product.description.length > 52
+          ? `${product.description.slice(0, 53)}...`
+          : product.description}
+      </TableCell>
       <TableCell>{product.unit_price}</TableCell>
       <TableCell>{product.stock_quantity}</TableCell>
       <TableCell>{product.category_name}</TableCell>
