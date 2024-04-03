@@ -34,6 +34,7 @@ const initialState = {
     maxPrice: 500000,
     availability: null,
   },
+  sortType: "mr",
 };
 export const productsPublicSlice = createSlice({
   name: "productsPublic",
@@ -63,6 +64,24 @@ export const productsPublicSlice = createSlice({
       state.productsCount = initialState.productsCount;
       state.actions = initialState.actions;
     },
+    sortProducts: (state, action) => {
+      const { sortType } = action.payload;
+
+      if (sortType === "plh") {
+        state.products = state.products.sort(
+          (a, b) => a.unit_price - b.unit_price
+        );
+      } else if (sortType === "phl") {
+        state.products = state.products.sort(
+          (a, b) => b.unit_price - a.unit_price
+        );
+      } else if (sortType === "mr") {
+        state.products = state.products.sort((a, b) => a.id - b.id);
+      }
+    },
+    updateSortType: (state, action) => {
+      state.sortType = action.payload.sortType;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -85,10 +104,16 @@ export const productsPublicSelector = (state) => state.productsPublic.products;
 export const productsCountSelector = (state) =>
   state.productsPublic.productsCount;
 export const productsFilter = (state) => state.productsPublic.filters;
+export const sortTypeSelector = (state) => state.productsPublic.sortType;
 
 export const productsPublicStatusSelector = (state) =>
   state.productsPublic.actions.fetchProductsList.status;
 
-export const { addFilter, removeFilter, resetState } =
-  productsPublicSlice.actions;
+export const {
+  addFilter,
+  removeFilter,
+  resetState,
+  sortProducts,
+  updateSortType,
+} = productsPublicSlice.actions;
 export default productsPublicSlice.reducer;
