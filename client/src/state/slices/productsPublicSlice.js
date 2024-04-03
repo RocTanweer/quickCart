@@ -9,29 +9,61 @@ export const productsPublicAsync = createAsyncThunk(
     try {
       const { offset, rowsCount, filters } = config;
       const response = await axCli.get(
-        `/api/products/?offset=${offset}&rowsCount=${rowsCount}`
+        `/api/products/?offset=${offset}&rowsCount=${rowsCount}${filters}`
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
+      console.log(error);
       if (error.response) {
         return rejectWithValue(error.response.data);
       }
     }
   }
 );
-
+const initialState = {
+  products: [],
+  productDetails: {},
+  productsCount: null,
+  actions: {
+    fetchProductsList: { status: "idle", error: null },
+  },
+  filters: {
+    productCategories: [],
+    productBrands: [],
+    minPrice: 0,
+    maxPrice: 500000,
+    availability: null,
+  },
+};
 export const productsPublicSlice = createSlice({
   name: "productsPublic",
-  initialState: {
-    products: [],
-    productDetails: {},
-    productsCount: null,
-    actions: {
-      fetchProductsList: { status: "idle", error: null },
+  initialState,
+  reducers: {
+    addFilter: (state, action) => {
+      const { filterType, value } = action.payload;
+      if (Array.isArray(state.filters[filterType])) {
+        state.filters[filterType].push(value);
+      } else {
+        state.filters[filterType] = value;
+      }
+    },
+    removeFilter: (state, action) => {
+      const { filterType, value } = action.payload;
+      if (Array.isArray(state.filters[filterType])) {
+        state.filters[filterType] = state.filters[filterType].filter(
+          (val) => val !== value
+        );
+      } else {
+        state.filters[filterType] = null;
+      }
+    },
+    resetState: (state) => {
+      state.products = initialState.products;
+      state.productDetails = initialState.productDetails;
+      state.productsCount = initialState.productsCount;
+      state.actions = initialState.actions;
     },
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(productsPublicAsync.pending, (state) => {
@@ -52,8 +84,11 @@ export const productsPublicSlice = createSlice({
 export const productsPublicSelector = (state) => state.productsPublic.products;
 export const productsCountSelector = (state) =>
   state.productsPublic.productsCount;
+export const productsFilter = (state) => state.productsPublic.filters;
 
 export const productsPublicStatusSelector = (state) =>
   state.productsPublic.actions.fetchProductsList.status;
 
+export const { addFilter, removeFilter, resetState } =
+  productsPublicSlice.actions;
 export default productsPublicSlice.reducer;
