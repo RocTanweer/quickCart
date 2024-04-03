@@ -16,10 +16,14 @@ import {
   FormGroup,
   FormControlLabel,
   Slider,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import CheckIcon from "@mui/icons-material/Check";
 
 import { cld } from "../../lib/cloudinaryInstance";
 import { fill } from "@cloudinary/url-gen/actions/resize";
@@ -35,6 +39,9 @@ import {
   productsPublicStatusSelector,
   removeFilter,
   resetState,
+  sortProducts,
+  sortTypeSelector,
+  updateSortType,
 } from "../../state/slices/productsPublicSlice";
 import { axCli } from "../../lib/axiosClient";
 
@@ -52,15 +59,32 @@ const generateQueryString = (obj) => {
   return qs;
 };
 
+const sortMenuData = [
+  {
+    name: "Most relevant",
+    code: "mr",
+  },
+  {
+    name: "Price low to high",
+    code: "plh",
+  },
+  {
+    name: "Price high to low",
+    code: "phl",
+  },
+];
+
 const Products = () => {
   const [page, setPage] = useState(1);
   const [productCategories, setProductCategories] = useState([]);
   const [productBrands, setProductBrands] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const products = useSelector(productsPublicSelector);
   const productsCount = useSelector(productsCountSelector);
   const productsStatus = useSelector(productsPublicStatusSelector);
   const filters = useSelector(productsFilter);
+  const sortType = useSelector(sortTypeSelector);
   const [initFilters, setInitFilters] = useState(filters);
   const isMounted = useRef(true);
 
@@ -72,22 +96,24 @@ const Products = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      console.log("in fetch");
       try {
-        if (isMounted.current && products.length === 0) {
-          await dispatch(
-            productsPublicAsync({
-              offset: 0,
-              rowsCount: PRODUCT_ITEMS_PER_PAGE,
-              filters: "",
-            })
-          ).unwrap();
-        }
+        await dispatch(
+          productsPublicAsync({
+            offset: 0,
+            rowsCount: PRODUCT_ITEMS_PER_PAGE,
+            filters: "",
+          })
+        ).unwrap();
       } catch (error) {
         console.log(error);
       }
     };
-    fetchProducts();
-  }, [dispatch, products]);
+    if (isMounted.current && products.length === 0) {
+      fetchProducts();
+    }
+    dispatch(sortProducts({ sortType: sortType }));
+  }, [dispatch, products, sortType]);
 
   useEffect(() => {
     const fetchProductCategories = async () => {
@@ -178,6 +204,16 @@ const Products = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSortBtn = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSortMenuItems = (event) => {
+    dispatch(sortProducts({ sortType: event.target.dataset.sorttype }));
+    dispatch(updateSortType({ sortType: event.target.dataset.sorttype }));
+    setAnchorEl(null);
   };
 
   const formatValueLabel = (value) => {
@@ -300,8 +336,34 @@ const Products = () => {
           </FlexBox>
         </Grid>
         <Grid item md={9}>
-          <FlexBox csx={{ justifyContent: "flex-end" }}>
-            <p>Sort By</p>
+          <FlexBox csx={{ justifyContent: "flex-end", mb: 2 }}>
+            <div>
+              <Button
+                id="sort-btn"
+                variant="outlined"
+                onClick={handleSortBtn}
+                endIcon={<ArrowDropDownIcon />}
+              >
+                Sort by
+              </Button>
+              <Menu
+                id="sort-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
+              >
+                {sortMenuData.map((md) => (
+                  <MenuItem
+                    key={md.code}
+                    data-sorttype={md.code}
+                    onClick={handleSortMenuItems}
+                  >
+                    {md.name}
+                    {sortType === md.code && <CheckIcon />}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </div>
           </FlexBox>
           <Grid container columnSpacing={2} rowSpacing={4} sx={{ mb: "20px" }}>
             {(productsStatus === "idle" || productsStatus === "loading") && (
@@ -335,8 +397,7 @@ const Products = () => {
                     </CardActionArea>
                     <CardActions sx={{ justifyContent: "space-between" }}>
                       <Typography sx={{ fontWeight: "bold" }}>
-                        <sup>&#x20B9;</sup>
-                        {product.unit_price}
+                        {formatValueLabel(product.unit_price)}
                       </Typography>
                       <Button
                         size="small"
