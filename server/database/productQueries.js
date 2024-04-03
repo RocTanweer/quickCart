@@ -37,62 +37,62 @@ export const getProducts = async (conditions) => {
     const {
       offset,
       rowsCount,
-      productCategoryId,
-      productBrandId,
+      productCategories,
+      productBrands,
       minPrice,
       maxPrice,
       availability,
     } = conditions;
-
     let sqlResult =
       "SELECT id, unit_price, name, image FROM product WHERE 1 = 1";
     let sqlCount = "SELECT COUNT(*) FROM product WHERE 1 = 1";
     let sqlFilters = "";
     const values = [];
-
-    if (productCategoryId) {
-      if (Array.isArray(productCategoryId)) {
-        sqlFilters += " AND";
-        productCategoryId.forEach((id, i, array) => {
+    if (productCategories) {
+      if (Array.isArray(productCategories)) {
+        sqlFilters += " AND (";
+        productCategories.forEach((id, i, array) => {
           sqlFilters += " product_category_id = ?";
           if (i !== array.length - 1) {
             sqlFilters += " OR";
           }
         });
-        values.push(...productCategoryId);
+        sqlFilters += ")";
+        values.push(...productCategories);
       } else {
         sqlFilters += " AND product_category_id = ?";
-        values.push(productCategoryId);
+        values.push(productCategories);
       }
     }
-    if (productBrandId) {
-      if (Array.isArray(productBrandId)) {
-        sqlFilters += " AND";
-        productBrandId.forEach((id, i, array) => {
+    if (productBrands) {
+      if (Array.isArray(productBrands)) {
+        sqlFilters += " AND (";
+        productBrands.forEach((id, i, array) => {
           sqlFilters += " product_brand_id = ?";
           if (i !== array.length - 1) {
             sqlFilters += " OR";
           }
         });
-        values.push(...productBrandId);
+        sqlFilters += ")";
+        values.push(...productBrands);
       } else {
         sqlFilters += " AND product_brand_id = ?";
-        values.push(productBrandId);
+        values.push(productBrands);
       }
     }
-    if (availability) sqlFilters += " AND stock_quantity > 0";
+    if (availability === "available") sqlFilters += " AND stock_quantity > 0";
 
     if (minPrice && maxPrice) {
       sqlFilters += " AND unit_price >= ? AND unit_price <= ?";
       values.push(minPrice, maxPrice);
     }
 
+    sqlCount += sqlFilters;
+    const [result] = await connection.execute(sqlCount, values);
+
     sqlResult += sqlFilters + " LIMIT ?, ?";
     values.push(offset, rowsCount);
     const [results] = await connection.execute(sqlResult, values);
-
-    sqlCount += sqlFilters;
-    const [result] = await connection.execute(sqlCount, values);
 
     return { products: results, count: result[0]["COUNT(*)"] };
   } catch (error) {

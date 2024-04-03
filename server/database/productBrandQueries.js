@@ -15,8 +15,12 @@ export const createProductBrand = async (data) => {
 export const getProductBrands = async (config) => {
   try {
     const { offset, rowsCount } = config;
-    const sql = `SELECT * FROM product_brand ORDER BY id LIMIT ?, ? `;
-    const values = [offset, rowsCount];
+    let sql = "SELECT * FROM product_brand ORDER BY id";
+    const values = [];
+    if (offset && rowsCount) {
+      sql += " LIMIT ?, ?";
+      values.push(offset, rowsCount);
+    }
     const [results] = await connection.execute(sql, values);
     return results;
   } catch (error) {
