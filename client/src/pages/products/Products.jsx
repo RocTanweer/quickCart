@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 import {
   Box,
@@ -86,6 +87,9 @@ const Products = () => {
   const filters = useSelector(productsFilter);
   const sortType = useSelector(sortTypeSelector);
   const [initFilters, setInitFilters] = useState(filters);
+
+  const location = useLocation();
+
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -96,7 +100,6 @@ const Products = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      console.log("in fetch");
       try {
         await dispatch(
           productsPublicAsync({
@@ -109,11 +112,12 @@ const Products = () => {
         console.log(error);
       }
     };
-    if (isMounted.current && products.length === 0) {
+    if (isMounted.current && products.length === 0 && !location.state?.pcID) {
       fetchProducts();
     }
+
     dispatch(sortProducts({ sortType: sortType }));
-  }, [dispatch, products, sortType]);
+  }, [dispatch, products, sortType, location]);
 
   useEffect(() => {
     const fetchProductCategories = async () => {
@@ -188,7 +192,8 @@ const Products = () => {
       );
     }
   };
-  const handleApplyFilter = async () => {
+
+  const handleApplyFilter = useCallback(async () => {
     try {
       const qs = generateQueryString(filters);
       dispatch(resetState());
@@ -204,7 +209,14 @@ const Products = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [dispatch, filters]);
+
+  useEffect(() => {
+    if (isMounted.current && location.state?.pcID) {
+      handleApplyFilter();
+      location.state = {};
+    }
+  }, [location, handleApplyFilter]);
 
   const handleSortBtn = (event) => {
     setAnchorEl(event.currentTarget);
