@@ -100,6 +100,19 @@ export const getProducts = async (conditions) => {
   }
 };
 
+export const getNewProducts = async () => {
+  try {
+    const sql = `SELECT id, name, description, image
+      FROM product
+      ORDER BY id DESC
+      LIMIT 5`;
+    const [response] = await connection.execute(sql);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProductsAdmin = async (config) => {
   try {
     const { offset, rowsCount } = config;
