@@ -64,6 +64,9 @@ export const productsPublicSlice = createSlice({
       state.productsCount = initialState.productsCount;
       state.actions = initialState.actions;
     },
+    resetFilters: (state) => {
+      state.filters = initialState.filters;
+    },
     sortProducts: (state, action) => {
       const { sortType } = action.payload;
 
@@ -115,5 +118,6 @@ export const {
   resetState,
   sortProducts,
   updateSortType,
+  resetFilters,
 } = productsPublicSlice.actions;
 export default productsPublicSlice.reducer;
