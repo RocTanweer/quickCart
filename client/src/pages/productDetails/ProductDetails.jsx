@@ -4,32 +4,44 @@ import { useParams } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
 import { axCli } from "../../lib/axiosClient";
 import { FlexBox } from "../../layouts";
+import { MyCarousel } from "../../components";
 
 import { cld } from "../../lib/cloudinaryInstance";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { formatValueLabel } from "../../utils/function";
+import RelatedProductCard from "./components/RelatedProductCard";
 
 const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState(null);
 
   const isMounted = useRef(true);
   useEffect(() => {
     return () => (isMounted.current = false);
   }, []);
-
   const { productId } = useParams();
   useEffect(() => {
     const fetchProductDetails = async (productId) => {
       try {
         const response = await axCli.get(`/api/products/${productId}`);
         setProductDetails(response.data.productDetails);
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
     };
+
+    const fetchRelatedProducts = async (productId) => {
+      try {
+        const response = await axCli.get(`/api/relatedProducts/${productId}`);
+        setRelatedProducts(response.data.relatedProducts);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     if (isMounted.current && productId) {
       fetchProductDetails(productId);
+      fetchRelatedProducts(productId);
     }
   }, [productId]);
 
@@ -42,7 +54,7 @@ const ProductDetails = () => {
         pt: 5,
       }}
     >
-      <FlexBox csx={{ gap: 5 }}>
+      <FlexBox csx={{ gap: 5, mb: 15 }}>
         <Box
           sx={{
             flex: 1,
@@ -92,6 +104,18 @@ const ProductDetails = () => {
           </Box>
         </Box>
       </FlexBox>
+
+      <Box mb={5}>
+        <Typography variant="h5" fontWeight="bold" mb={3}>
+          Related Products
+        </Typography>
+        {relatedProducts && (
+          <MyCarousel
+            products={relatedProducts}
+            cardComponent={RelatedProductCard}
+          />
+        )}
+      </Box>
     </Box>
   );
 };
