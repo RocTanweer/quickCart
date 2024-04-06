@@ -7,6 +7,7 @@ import {
   getProductsAdmin,
   getProductsCount,
   getNewProducts,
+  getRelatedProducts,
 } from "../database/productQueries.js";
 
 export const getProductList = async (req, res) => {
@@ -24,6 +25,16 @@ export const getNewProductList = async (req, res) => {
     const response = await getNewProducts();
 
     res.status(200).json({ newProducts: response });
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+};
+
+export const getRelatedProductList = async (req, res) => {
+  try {
+    const response = await getRelatedProducts(req.params.productId);
+
+    res.status(200).json({ relatedProducts: response });
   } catch (error) {
     res.json({ message: error.message });
   }

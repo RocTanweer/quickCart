@@ -113,6 +113,23 @@ export const getNewProducts = async () => {
   }
 };
 
+export const getRelatedProducts = async (productId) => {
+  try {
+    const sql1 = `SELECT product_category_id from product WHERE id = ?`;
+    const value = productId;
+    const [result] = await connection.execute(sql1, [value]);
+
+    const sql2 = `SELECT id, unit_price, name, image FROM product WHERE id != ? AND product_category_id = ? LIMIT 5`;
+    const [results] = await connection.execute(sql2, [
+      value,
+      result[0].product_category_id,
+    ]);
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProductsAdmin = async (config) => {
   try {
     const { offset, rowsCount } = config;
