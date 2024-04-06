@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 import {
   Box,
@@ -45,6 +45,7 @@ import {
   updateSortType,
 } from "../../state/slices/productsPublicSlice";
 import { axCli } from "../../lib/axiosClient";
+import { formatValueLabel } from "../../utils/function";
 
 const generateQueryString = (obj) => {
   let qs = "";
@@ -228,14 +229,6 @@ const Products = () => {
     setAnchorEl(null);
   };
 
-  const formatValueLabel = (value) => {
-    // Format the value with currency symbol
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "INR",
-    }).format(value);
-  };
-
   const visibleProducts = products.slice(
     (page - 1) * PRODUCT_ITEMS_PER_PAGE,
     page * PRODUCT_ITEMS_PER_PAGE
@@ -385,7 +378,10 @@ const Products = () => {
               visibleProducts.map((product) => (
                 <Grid item md={4} key={product.id}>
                   <Card>
-                    <CardActionArea>
+                    <CardActionArea
+                      component={NavLink}
+                      to={`/products/${product.id}`}
+                    >
                       <CardMedia
                         component="img"
                         image={cld

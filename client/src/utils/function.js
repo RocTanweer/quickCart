@@ -10,3 +10,11 @@ export const filterKeyValuePair = (obj1, obj2) => {
   const newObj = Object.fromEntries(filteredObj);
   return newObj;
 };
+
+export const formatValueLabel = (value) => {
+  // Format the value with currency symbol
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "INR",
+  }).format(value);
+};

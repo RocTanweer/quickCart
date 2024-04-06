@@ -1,5 +1,6 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { NavLink } from "react-router-dom";
 
 import {
   Typography,
@@ -36,7 +37,7 @@ const MyCorousel = ({ newProducts }) => {
       {newProducts &&
         newProducts.map((np) => (
           <Card key={np.id}>
-            <CardActionArea>
+            <CardActionArea component={NavLink} to={`/products/${np.id}`}>
               <CardMedia
                 component="img"
                 sx={{ width: "300px", height: "300px" }}
