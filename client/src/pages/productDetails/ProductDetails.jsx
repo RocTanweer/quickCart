@@ -15,8 +15,9 @@ const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState(null);
 
-  const isMounted = useRef(true);
+  const isMounted = useRef(false);
   useEffect(() => {
+    isMounted.current = true;
     return () => (isMounted.current = false);
   }, []);
   const { productId } = useParams();
