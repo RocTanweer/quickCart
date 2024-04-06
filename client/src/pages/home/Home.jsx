@@ -7,11 +7,12 @@ import { fill } from "@cloudinary/url-gen/actions/resize";
 import { FlexBox } from "../../layouts";
 import { axCli } from "../../lib/axiosClient";
 import { cld } from "../../lib/cloudinaryInstance";
-import MyCarousel from "./components/MyCarousel";
+import { MyCarousel } from "../../components";
 import {
   addFilter,
   resetFilters,
 } from "../../state/slices/productsPublicSlice";
+import NewProductCard from "./components/NewProductCard";
 
 const heroImgUrl =
   "https://res.cloudinary.com/quickcartexpress/image/upload/v1712172617/QuickCartExpress/sel4dbwbwhwulguxoi6a.png";
@@ -139,7 +140,7 @@ const Home = () => {
           New Collections
         </Typography>
         <Box>
-          <MyCarousel newProducts={newProducts} />
+          <MyCarousel products={newProducts} cardComponent={NewProductCard} />
         </Box>
       </Box>
     </Box>
