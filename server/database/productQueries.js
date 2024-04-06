@@ -144,7 +144,12 @@ export const getProductsCount = async () => {
 
 export const getProductById = async (productId) => {
   try {
-    const sql = "SELECT * FROM product WHERE id = ?";
+    const sql = `SELECT p.id, p.image, p.name, p.description, p.unit_price, p.stock_quantity, pc.name AS category_name, pb.name AS brand_name 
+    FROM product p
+    JOIN product_category pc ON p.product_category_id = pc.id
+    JOIN product_brand pb ON p.product_brand_id = pb.id
+    WHERE p.id = ?
+    `;
     const value = [productId];
 
     const [result] = await connection.execute(sql, value);
