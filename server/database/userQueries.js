@@ -57,20 +57,20 @@ export const getUserByEmail = async (userEmail) => {
   }
 };
 
-export const createUser = async (userData) => {
+export const createUser = async ({ name, email, password, profileImage }) => {
   try {
-    // createdAt, updatedAt, and roles
-    const { name, email, password, profileImage } = userData;
-    const sql = `INSERT INTO user (name, email, password, profile_image) VALUES (?, ?, ?, ?)`;
-    const [result] = await connection.execute(sql, [
-      name,
-      email,
-      password,
-      profileImage,
-    ]);
+    await connection.beginTransaction();
 
-    return result;
+    const [result] = await connection.execute(
+      `INSERT INTO user (name, email, password, profile_image) VALUES (?, ?, ?, ?)`,
+      [name, email, password, profileImage]
+    );
+    await connection.execute(`INSERT INTO shopping_cart (user_id) VALUES (?)`, [
+      result.insertId,
+    ]);
+    await connection.commit();
   } catch (error) {
+    connection.rollback();
     throw error;
   }
 };

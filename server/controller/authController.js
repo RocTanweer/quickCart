@@ -33,7 +33,11 @@ export const registration = async (req, res) => {
     await createUser(newUserInfo);
     res.sendStatus(201);
   } catch (error) {
-    res.json(error.cause);
+    if (error.cause) {
+      res.json(error.cause);
+    } else {
+      res.status(500).json(error.message);
+    }
   }
 };
 
