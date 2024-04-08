@@ -5,6 +5,7 @@ import createUserRoutes from "./userRoutes.js";
 import createProductRoutes from "./productRoutes.js";
 import createProductCategoryRoutes from "./productCategoryRoutes.js";
 import createProductBrandRoutes from "./productBrandRoutes.js";
+import createShoppingCartItemsRoutes from "./shoppingCartItemRoutes.js";
 
 export const router = express.Router();
 
@@ -14,5 +15,6 @@ export default () => {
   createProductRoutes(router);
   createProductCategoryRoutes(router);
   createProductBrandRoutes(router);
+  createShoppingCartItemsRoutes(router);
   return router;
 };
