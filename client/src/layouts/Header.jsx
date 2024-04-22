@@ -26,6 +26,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import FlexBox from "./FlexBox";
 
 const pages = [
   {
@@ -199,60 +200,68 @@ const Header = () => {
           </Box>
 
           {isLoggedIn() && (
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open user menu">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Tanweer" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {filteredUserMenu.map(({ name, icon, path }) => (
+            <FlexBox csx={{ flexGrow: 0, gap: 1.5 }}>
+              <IconButton component={NavLink} to="/cart">
+                <ShoppingCartIcon />
+              </IconButton>
+              <Box>
+                <Tooltip title="Open user menu">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Tanweer" src="/static/images/avatar/2.jpg" />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {filteredUserMenu.map(({ name, icon, path }) => (
+                    <MenuItem
+                      sx={{ padding: "0px" }}
+                      key={name}
+                      onClick={handleCloseUserMenu}
+                    >
+                      <Button
+                        sx={{
+                          color: "inherit",
+                        }}
+                        fullWidth
+                        variant="Outlined"
+                        component={NavLink}
+                        to={path}
+                        startIcon={icon}
+                      >
+                        {name}
+                      </Button>
+                    </MenuItem>
+                  ))}
+                  <Divider />
                   <MenuItem
                     sx={{ padding: "0px" }}
-                    key={name}
                     onClick={handleCloseUserMenu}
                   >
                     <Button
-                      sx={{
-                        color: "inherit",
-                      }}
+                      onClick={handleLogout}
                       fullWidth
-                      variant="Outlined"
-                      component={NavLink}
-                      to={path}
-                      startIcon={icon}
+                      startIcon={<LogoutIcon />}
                     >
-                      {name}
+                      Logout
                     </Button>
                   </MenuItem>
-                ))}
-                <Divider />
-                <MenuItem sx={{ padding: "0px" }} onClick={handleCloseUserMenu}>
-                  <Button
-                    onClick={handleLogout}
-                    fullWidth
-                    startIcon={<LogoutIcon />}
-                  >
-                    Logout
-                  </Button>
-                </MenuItem>
-              </Menu>
-            </Box>
+                </Menu>
+              </Box>
+            </FlexBox>
           )}
 
           {!isLoggedIn() && (

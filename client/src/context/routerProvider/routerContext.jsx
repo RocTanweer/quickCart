@@ -11,6 +11,7 @@ import PageNotFound from "../../pages/pageNotFound/PageNotFound.jsx";
 import { GuardRoute } from "../../components";
 import Profile from "../../pages/profile/Profile.jsx";
 import Admin from "../../pages/admin/Admin.jsx";
+import Cart from "../../pages/cart/Cart.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:name",
         element: <Profile />,
+      },
+      {
+        path: "/cart",
+        element: <Cart />,
       },
     ],
   },
