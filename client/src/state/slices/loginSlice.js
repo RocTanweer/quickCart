@@ -9,6 +9,7 @@ export const loginAsync = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axCli.post("/api/login", userData);
+      localStorage.setItem("QCSCId", response.data.shoppingCartId);
       return response.data;
     } catch (error) {
       if (error.response) {
