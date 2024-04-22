@@ -46,6 +46,7 @@ import {
 } from "../../state/slices/productsPublicSlice";
 import { axCli } from "../../lib/axiosClient";
 import { formatValueLabel } from "../../utils/function";
+import { shoppingCartItemsCreateAsync } from "../../state/slices/shoppingCartItemsSlice";
 
 const generateQueryString = (obj) => {
   let qs = "";
@@ -227,6 +228,21 @@ const Products = () => {
     dispatch(sortProducts({ sortType: event.target.dataset.sorttype }));
     dispatch(updateSortType({ sortType: event.target.dataset.sorttype }));
     setAnchorEl(null);
+  };
+
+  const handleAddToCartBtn = async (productId) => {
+    const shoppingCartId = localStorage.getItem("QCSCId");
+    console.log(shoppingCartId, productId);
+    try {
+      await dispatch(
+        shoppingCartItemsCreateAsync({
+          shoppingCartId: shoppingCartId,
+          productId,
+        })
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const visibleProducts = products.slice(
@@ -411,6 +427,7 @@ const Products = () => {
                         size="small"
                         variant="outlined"
                         endIcon={<AddShoppingCartIcon />}
+                        onClick={() => handleAddToCartBtn(product.id)}
                       >
                         Add
                       </Button>
