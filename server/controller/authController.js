@@ -7,6 +7,7 @@ import {
   createUser,
   getUserByEmail,
 } from "../database/userQueries.js";
+import { getShoppingCartId } from "../database/shoppingCartItemQueries.js";
 
 export const registration = async (req, res) => {
   try {
@@ -72,7 +73,9 @@ export const login = async (req, res) => {
       maxAge: 86400000, // in milliseconds
     });
 
-    res.sendStatus(200);
+    const shoppingCartId = await getShoppingCartId(userFromDB.user_id);
+
+    res.status(200).json({ shoppingCartId });
   } catch (error) {
     res.json(error.cause);
   }
