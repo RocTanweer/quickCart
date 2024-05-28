@@ -62,7 +62,17 @@ export const shoppingCartItemsSlice = createSlice({
       delteItem: { status: "idle", error: null },
     },
   },
-  reducers: {},
+  reducers: {
+    updateProductQuantity: (state, action) => {
+      const { cartItemId, newQuantity } = action.payload;
+      state.itemsList = state.itemsList.map((item) => {
+        if (item.product_id === cartItemId) {
+          return { ...item, product_quantity: newQuantity };
+        }
+        return item;
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(shoppingCartItemsListAsync.pending, (state) => {
@@ -105,4 +115,5 @@ export const shoppingCartItemsListSelector = (state) =>
 export const shoppingCartItemsListStatusSelector = (state) =>
   state.shoppingCartItems.actions.fetchItemsList.status;
 
+export const { updateProductQuantity } = shoppingCartItemsSlice.actions;
 export default shoppingCartItemsSlice.reducer;

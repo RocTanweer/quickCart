@@ -30,7 +30,15 @@ const Tabs = ({ activeSec, handleActiveSec, btnText, setBtnText }) => {
   const open = Boolean(anchorEl);
 
   return (
-    <FlexBox csx={{ paddingX: "24px", justifyContent: "flex-start" }}>
+    <FlexBox
+      csx={{
+        paddingX: "24px",
+        justifyContent: "flex-start",
+        maxWidth: "1536px",
+        marginX: "auto",
+        marginTop: "20px",
+      }}
+    >
       <Box sx={{ border: "1px solid", borderRadius: "8px" }}>
         <Button
           sx={{ textTransform: "capitalize" }}

@@ -80,7 +80,7 @@ const ProductList = ({ handleActiveSec, setBtnText }) => {
 
   return (
     <Box
-      sx={{ maxWidth: "500px", width: "100%", minHeight: "500px", mt: "40px" }}
+      sx={{ maxWidth: "1000px", width: "100%", minHeight: "500px", mt: "40px" }}
     >
       <FlexBox csx={{ justifyContent: "flex-end", mb: "20px" }}>
         <Button variant="outlined" endIcon={<AddIcon />} onClick={handleAddBtn}>

@@ -2,7 +2,7 @@ import { connection } from "../config/database.js";
 
 export const getShoppingCartItems = async (shoppingCartId) => {
   try {
-    const sql = `SELECT p.name AS product_name, p.image AS product_image, p.unit_price AS product_price, sci.quantity AS product_quantity
+    const sql = `SELECT sci.id AS product_id, p.name AS product_name, p.image AS product_image, p.unit_price AS product_price, p.stock_quantity AS product_stock_quantity, 1 AS product_quantity
         FROM shopping_cart_item sci
         JOIN product p ON p.id = sci.product_id
         WHERE sci.shopping_cart_id = ?

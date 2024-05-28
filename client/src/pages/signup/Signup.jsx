@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import Cookies from "js-cookie";
 
@@ -18,6 +18,7 @@ import {
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 import { FlexBox } from "../../layouts";
 import { emailValidator } from "../../lib/yupSchemas";
@@ -62,8 +63,36 @@ export const Signup = () => {
   }
 
   return (
-    <FlexBox csx={{ minHeight: "100vh" }}>
-      <Stack gap={2} sx={{ maxWidth: "450px", width: "100%", height: "auto" }}>
+    <FlexBox csx={{ minHeight: "100vh", flexDirection: "column" }}>
+      <FlexBox csx={{ mb: 2 }}>
+        <ShoppingCartIcon sx={{ display: "flex", mr: 1 }} />
+        <Typography
+          variant="h5"
+          component={NavLink}
+          to="/"
+          sx={{
+            fontFamily: "monospace",
+            fontWeight: 700,
+            letterSpacing: ".2rem",
+            color: "inherit",
+            textDecoration: "none",
+          }}
+        >
+          QuickCart
+        </Typography>
+      </FlexBox>
+      <Stack
+        gap={2}
+        sx={{
+          maxWidth: "450px",
+          width: "100%",
+          height: "auto",
+          border: "1px solid",
+          borderRadius: "10px",
+          borderColor: (theme) => theme.palette.grey[400],
+          padding: "30px",
+        }}
+      >
         <Box>
           <Typography
             sx={{ textAlign: "center" }}
