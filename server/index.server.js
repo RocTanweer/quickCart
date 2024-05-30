@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-import { SERVER_PORT } from "./config/envVar.js";
+import { SERVER_PORT, CLIENT_URL } from "./config/envVar.js";
 
 import combinedRoutes from "./routes/combinedRoutes.js";
 import { connectDB } from "./config/database.js";
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: CLIENT_URL,
     credentials: true,
   })
 );
