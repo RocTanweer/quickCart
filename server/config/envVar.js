@@ -14,7 +14,7 @@ export const DB_SERVER_PORT = process.env.DB_SERVER_PORT;
 
 export const SERVER_PORT = process.env.PORT || 4000;
 
-export const CA_CERT = process.env.CA_CERT.replace(/\\n/g, "\n");
+// export const CA_CERT = process.env.CA_CERT.replace(/\\n/g, "\n");
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
