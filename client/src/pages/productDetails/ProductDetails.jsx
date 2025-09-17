@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Box, Button, Typography } from "@mui/material";
 import { axCli } from "../../lib/axiosClient";
@@ -11,16 +12,25 @@ import { fill } from "@cloudinary/url-gen/actions/resize";
 import { formatValueLabel } from "../../utils/function";
 import RelatedProductCard from "./components/RelatedProductCard";
 
+import {
+  shoppingCartItemsCreateAsync,
+  shoppingCartItemsListSelector,
+} from "../../state/slices/shoppingCartItemsSlice";
+
 const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState(null);
-
+  const [loading, setLoading] = useState(false);
+  const cartItemsList = useSelector(shoppingCartItemsListSelector);
+  const dispatch = useDispatch();
   const isMounted = useRef(false);
+  const { productId } = useParams();
+
   useEffect(() => {
     isMounted.current = true;
     return () => (isMounted.current = false);
   }, []);
-  const { productId } = useParams();
+
   useEffect(() => {
     const fetchProductDetails = async (productId) => {
       try {
@@ -45,6 +55,38 @@ const ProductDetails = () => {
       fetchRelatedProducts(productId);
     }
   }, [productId]);
+
+  const handleAddToCartBtn = async (productId) => {
+    const shoppingCartId = localStorage.getItem("QCSCId");
+
+    try {
+      setLoading(true);
+      console.log({
+        shoppingCartId: shoppingCartId,
+        productId,
+      });
+      await dispatch(
+        shoppingCartItemsCreateAsync({
+          shoppingCartId: shoppingCartId,
+          productId,
+        })
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  let btnText;
+  const productInCart = cartItemsList.some(
+    (item) => item.product_id === +productId
+  );
+  if (loading === false && productInCart) {
+    btnText = "Added";
+  } else if (loading === false && !productInCart) {
+    btnText = "Add";
+  }
 
   return (
     <Box
@@ -99,8 +141,14 @@ const ProductDetails = () => {
             <Typography>{productDetails?.description}</Typography>
           </Box>
           <Box>
-            <Button variant="contained" fullWidth>
-              Add to Cart
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => handleAddToCartBtn(productId)}
+              disabled={productInCart}
+            >
+              {loading === true && "Loading..."}
+              {btnText}
             </Button>
           </Box>
         </Box>
