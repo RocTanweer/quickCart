@@ -22,7 +22,7 @@ const CartTableRow = ({ cartItem }) => {
   const handleChangeQuantity = (e) => {
     dispatch(
       updateProductQuantity({
-        cartItemId: cartItem.product_id,
+        cartItemId: cartItem.cart_item_id,
         newQuantity: +e.target.value,
       })
     );
@@ -61,11 +61,6 @@ const CartTableRow = ({ cartItem }) => {
           value={cartItem.product_quantity}
           onChange={handleChangeQuantity}
         />
-      </TableCell>
-      <TableCell>
-        <Typography>
-          {formatValueLabel(cartItem.product_quantity * cartItem.product_price)}
-        </Typography>
       </TableCell>
       <TableCell>
         <IconButton color="error" onClick={null}>

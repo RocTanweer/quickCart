@@ -19,8 +19,8 @@ export const getCartItemsByCartId = async (req, res) => {
 export const createShoppingCartItem = async (req, res) => {
   try {
     const { shoppingCartId, productId } = req.body;
-    await addShoppingCartItem({ shoppingCartId, productId });
-    res.sendStatus(201);
+    const cartItem = await addShoppingCartItem({ shoppingCartId, productId });
+    res.status(201).json({ cartItem });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

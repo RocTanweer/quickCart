@@ -66,7 +66,7 @@ export const shoppingCartItemsSlice = createSlice({
     updateProductQuantity: (state, action) => {
       const { cartItemId, newQuantity } = action.payload;
       state.itemsList = state.itemsList.map((item) => {
-        if (item.product_id === cartItemId) {
+        if (item.cart_item_id === cartItemId) {
           return { ...item, product_quantity: newQuantity };
         }
         return item;
@@ -89,8 +89,9 @@ export const shoppingCartItemsSlice = createSlice({
       .addCase(shoppingCartItemsCreateAsync.pending, (state) => {
         state.actions.createItem.status = "loading";
       })
-      .addCase(shoppingCartItemsCreateAsync.fulfilled, (state) => {
+      .addCase(shoppingCartItemsCreateAsync.fulfilled, (state, action) => {
         state.actions.createItem.status = "succeeded";
+        state.itemsList.push(action.payload.cartItem);
       })
       .addCase(shoppingCartItemsCreateAsync.rejected, (state, action) => {
         state.actions.createItem.status = "failed";
