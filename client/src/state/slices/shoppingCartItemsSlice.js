@@ -72,6 +72,12 @@ export const shoppingCartItemsSlice = createSlice({
         return item;
       });
     },
+    removeCartItem: (state, action) => {
+      const { cartItemId } = action.payload;
+      state.itemsList = state.itemsList.filter(
+        (item) => item.cart_item_id !== cartItemId
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -116,5 +122,6 @@ export const shoppingCartItemsListSelector = (state) =>
 export const shoppingCartItemsListStatusSelector = (state) =>
   state.shoppingCartItems.actions.fetchItemsList.status;
 
-export const { updateProductQuantity } = shoppingCartItemsSlice.actions;
+export const { updateProductQuantity, removeCartItem } =
+  shoppingCartItemsSlice.actions;
 export default shoppingCartItemsSlice.reducer;

@@ -52,7 +52,7 @@ export const addShoppingCartItem = async ({ shoppingCartId, productId }) => {
   }
 };
 
-export const deleteShoppingCartItem = async (id) => {
+export const deleteShoppingCartItem = async (shoppingCartItemId) => {
   try {
     const sql = `DELETE FROM shopping_cart_item WHERE id = ?`;
     await connection.execute(sql, [shoppingCartItemId]);

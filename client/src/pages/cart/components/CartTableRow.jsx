@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   Avatar,
@@ -10,13 +11,18 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FlexBox } from "../../../layouts";
-import { updateProductQuantity } from "../../../state/slices/shoppingCartItemsSlice";
+import {
+  shoppingCartItemsDeleteAsync,
+  updateProductQuantity,
+  removeCartItem,
+} from "../../../state/slices/shoppingCartItemsSlice";
 
 import { cld } from "../../../lib/cloudinaryInstance";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { formatValueLabel } from "../../../utils/function";
 
 const CartTableRow = ({ cartItem }) => {
+  const [deleting, setDeleting] = useState(false);
   const dispatch = useDispatch();
 
   const handleChangeQuantity = (e) => {
@@ -26,6 +32,20 @@ const CartTableRow = ({ cartItem }) => {
         newQuantity: +e.target.value,
       })
     );
+  };
+
+  const handleDeleteBtn = async (shoppingCartItemId) => {
+    try {
+      setDeleting(true);
+      await dispatch(
+        shoppingCartItemsDeleteAsync({ shoppingCartItemId })
+      ).unwrap();
+      dispatch(removeCartItem({ cartItemId: cartItem.cart_item_id }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -63,7 +83,11 @@ const CartTableRow = ({ cartItem }) => {
         />
       </TableCell>
       <TableCell>
-        <IconButton color="error" onClick={null}>
+        <IconButton
+          color="error"
+          onClick={() => handleDeleteBtn(cartItem.cart_item_id)}
+          disabled={deleting}
+        >
           <DeleteIcon />
         </IconButton>
       </TableCell>
