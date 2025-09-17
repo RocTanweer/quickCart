@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { userRoleSelector } from "../state/slices/loginSlice";
 import { logoutAsync } from "../state/slices/logoutSlice";
+import {
+  shoppingCartItemsListAsync,
+  shoppingCartItemsListSelector,
+} from "../state/slices/shoppingCartItemsSlice";
+
 import { isLoggedIn } from "../utils/function";
 
 import {
@@ -19,6 +24,7 @@ import {
   Tooltip,
   MenuItem,
   Button,
+  Badge,
 } from "@mui/material";
 
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -56,8 +62,30 @@ const Header = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const userRole = useSelector(userRoleSelector);
+  const cartItemsList = useSelector(shoppingCartItemsListSelector);
   const dispatch = useDispatch();
   const location = useLocation();
+
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => (isMounted.current = false);
+  }, []);
+
+  const shoppingCartId = localStorage.getItem("QCSCId");
+  useEffect(() => {
+    const fetchShoppingCartItems = async () => {
+      try {
+        await dispatch(shoppingCartItemsListAsync({ shoppingCartId })).unwrap();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (isMounted.current && cartItemsList.length === 0) {
+      fetchShoppingCartItems();
+    }
+  }, [dispatch, shoppingCartId, cartItemsList]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -202,7 +230,9 @@ const Header = () => {
           {isLoggedIn() && (
             <FlexBox csx={{ flexGrow: 0, gap: 1.5 }}>
               <IconButton component={NavLink} to="/cart">
-                <ShoppingCartIcon />
+                <Badge badgeContent={cartItemsList.length} color="primary">
+                  <ShoppingCartIcon />
+                </Badge>
               </IconButton>
               <Box>
                 <Tooltip title="Open user menu">
