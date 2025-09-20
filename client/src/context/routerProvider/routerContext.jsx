@@ -12,6 +12,8 @@ import { GuardRoute } from "../../components";
 import Profile from "../../pages/profile/Profile.jsx";
 import Admin from "../../pages/admin/Admin.jsx";
 import Cart from "../../pages/cart/Cart.jsx";
+import GuardCheckout from "../../pages/checkout/components/GuardCheckout.jsx";
+import Checkout from "../../pages/checkout/Checkout.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +61,15 @@ export const router = createBrowserRouter([
       {
         path: "/admin",
         element: <Admin />,
+      },
+    ],
+  },
+  {
+    element: <GuardCheckout />,
+    children: [
+      {
+        path: "/checkout",
+        element: <Checkout />,
       },
     ],
   },
