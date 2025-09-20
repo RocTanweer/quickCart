@@ -1,13 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { userRoleSelector } from "../state/slices/loginSlice";
 import { logoutAsync } from "../state/slices/logoutSlice";
-import {
-  shoppingCartItemsListAsync,
-  shoppingCartItemsListSelector,
-} from "../state/slices/shoppingCartItemsSlice";
+import { shoppingCartItemsListSelector } from "../state/slices/shoppingCartItemsSlice";
 
 import { isLoggedIn } from "../utils/function";
 
@@ -65,27 +62,6 @@ const Header = () => {
   const cartItemsList = useSelector(shoppingCartItemsListSelector);
   const dispatch = useDispatch();
   const location = useLocation();
-
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    return () => (isMounted.current = false);
-  }, []);
-
-  const shoppingCartId = localStorage.getItem("QCSCId");
-  useEffect(() => {
-    const fetchShoppingCartItems = async () => {
-      try {
-        await dispatch(shoppingCartItemsListAsync({ shoppingCartId })).unwrap();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (isMounted.current && cartItemsList.length === 0) {
-      fetchShoppingCartItems();
-    }
-  }, [dispatch, shoppingCartId, cartItemsList]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
