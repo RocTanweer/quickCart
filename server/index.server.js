@@ -5,11 +5,11 @@ import cors from "cors";
 import { SERVER_PORT, CLIENT_URL } from "./config/envVar.js";
 
 import combinedRoutes from "./routes/combinedRoutes.js";
-import { connectDB } from "./config/database.js";
+import { testDBConnection } from "./database/db.js";
 
 const app = express();
 
-connectDB();
+testDBConnection();
 
 app.use(express.json());
 app.use(cookieParser());

@@ -2,7 +2,7 @@ import {
   getShoppingCartItems,
   addShoppingCartItem,
   deleteShoppingCartItem,
-} from "../database/shoppingCartItemQueries.js";
+} from "../database/queries/shoppingCartItemQueries.js";
 
 export const getCartItemsByCartId = async (req, res) => {
   try {

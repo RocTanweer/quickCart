@@ -4,7 +4,7 @@ import {
   getProductCategoriesCount,
   getProductCategoriesName,
   updateProductCategory,
-} from "../database/productCategoryQueries.js";
+} from "../database/queries/productCategoryQueries.js";
 
 export const addProductCategory = async (req, res) => {
   try {

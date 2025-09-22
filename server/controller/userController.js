@@ -4,7 +4,7 @@ import {
   getUsersCount,
   updateUser,
   deleteUser,
-} from "../database/userQueries.js";
+} from "../database/queries/userQueries.js";
 
 export const userList = async (req, res) => {
   try {

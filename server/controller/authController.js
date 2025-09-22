@@ -6,8 +6,8 @@ import {
   isThereUser,
   createUser,
   getUserByEmail,
-} from "../database/userQueries.js";
-import { getShoppingCartId } from "../database/shoppingCartItemQueries.js";
+} from "../database/queries/userQueries.js";
+import { getShoppingCartId } from "../database/queries/shoppingCartItemQueries.js";
 
 export const registration = async (req, res) => {
   try {

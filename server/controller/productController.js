@@ -8,7 +8,7 @@ import {
   getProductsCount,
   getNewProducts,
   getRelatedProducts,
-} from "../database/productQueries.js";
+} from "../database/queries/productQueries.js";
 
 export const getProductList = async (req, res) => {
   try {

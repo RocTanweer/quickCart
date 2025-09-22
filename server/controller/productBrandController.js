@@ -4,7 +4,7 @@ import {
   getProductBrandsCount,
   getProductBrandsName,
   updateProductBrand,
-} from "../database/productBrandQueries.js";
+} from "../database/queries/productBrandQueries.js";
 
 export const addProductBrand = async (req, res) => {
   try {
