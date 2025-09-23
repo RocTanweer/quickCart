@@ -6,7 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.server.js",
-    "start": "node index.server.js"
+    "start": "node index.server.js",
+    "knex:init": "npx knex init",
+    "migrate:make": "npx knex --knexfile ./config/knexfile.js migrate:make",
+    "migrate:latest": "npx knex --knexfile ./config/knexfile.js migrate:latest",
+    "migrate:rollback": "npx knex --knexfile ./config/knexfile.js migrate:rollback",
+    "migrate:up": "npx knex --knexfile ./config/knexfile.js migrate:up",
+    "migrate:down": "npx knex --knexfile ./config/knexfile.js migrate:down",
+    "seed:make": "npx knex --knexfile ./config/knexfile.js seed:make",
+    "seed:run": "npx knex --knexfile ./config/knexfile.js seed:run"
   },
   "repository": {
     "type": "git",
