@@ -1,6 +1,11 @@
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
 
-dotenv.config();
+// Ensuring knex always loads .env from project root(default to where knexfile.js is), no matter where knex runs
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: resolve(__dirname, "../.env") });
 
 export const DB_HOST = process.env.DB_HOST;
 
