@@ -24,6 +24,9 @@ const knexConfig = {
     migrations: {
       directory: "../database/migrations",
     },
+    seeds: {
+      directory: "../database/seeds",
+    },
   },
 
   production: {
@@ -39,6 +42,9 @@ const knexConfig = {
     pool: { min: 0, max: 10 },
     migrations: {
       directory: "../database/migrations",
+    },
+    seeds: {
+      directory: "../database/seeds",
     },
   },
 };
