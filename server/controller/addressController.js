@@ -9,10 +9,6 @@ export const getAddress = async (req, res) => {
     const userId = req.params.userId;
     const address = await selectAddress(userId);
 
-    if (!address) {
-      res.status(404).json({ message: "Address not found" });
-    }
-
     res.status(200).json({ address });
   } catch (error) {
     console.log("Database error: ", error);

@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import AddressForm from "../components/AddressForm";
@@ -15,6 +15,15 @@ const Address = () => {
   const dispatch = useDispatch();
   const userId = useSelector(userIdSelector);
   const addressDetails = useSelector(addressDetailsSelector);
+  const [currAddEdit, setCurrAddEdit] = useState(null);
+
+  const handleCurrAddEdit = (currAdd) => {
+    if (currAdd === undefined) {
+      setCurrAddEdit(null);
+    } else {
+      setCurrAddEdit(currAdd);
+    }
+  };
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -43,7 +52,19 @@ const Address = () => {
 
       {!addressDetails && <AddressForm />}
 
-      {addressDetails && <AddressCard address={addressDetails} />}
+      {addressDetails && !currAddEdit && (
+        <AddressCard
+          address={addressDetails}
+          handleCurrAddEdit={handleCurrAddEdit}
+        />
+      )}
+
+      {addressDetails && currAddEdit && (
+        <AddressForm
+          addFormInitState={currAddEdit}
+          handleCurrAddEdit={handleCurrAddEdit}
+        />
+      )}
     </Box>
   );
 };

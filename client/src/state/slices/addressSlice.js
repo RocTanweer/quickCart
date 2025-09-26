@@ -5,8 +5,9 @@ export const addressCreateAsync = createAsyncThunk(
   "address/create",
   async (data, { rejectWithValue }) => {
     try {
-      const { id } = await axCli.post("/api/address", data);
-      return { address: { id, ...data } };
+      const response = await axCli.post("/api/address", data);
+      const address = { id: response.data.id, ...data };
+      return { address };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -47,6 +48,12 @@ export const addressSlice = createSlice({
       updateAddress: { status: "idle", error: null },
     },
   },
+  reducers: {
+    updateAddress: (state, action) => {
+      const { updates } = action.payload;
+      state.addressDetails = { ...state.addressDetails, ...updates };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(addressCreateAsync.pending, (state) => {
@@ -83,6 +90,8 @@ export const addressSlice = createSlice({
       });
   },
 });
+
+export const { updateAddress } = addressSlice.actions;
 
 export const addressDetailsSelector = (state) => state.address.addressDetails;
 

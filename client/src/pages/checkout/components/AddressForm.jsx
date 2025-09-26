@@ -18,30 +18,47 @@ import { states } from "../constants/states";
 import { addressFormValSch } from "../../../lib/yupSchemas";
 import { useDispatch, useSelector } from "react-redux";
 import { userIdSelector } from "../../../state/slices/loginSlice";
-import { addressCreateAsync } from "../../../state/slices/addressSlice";
+import {
+  addressCreateAsync,
+  addressUpdateAsync,
+  updateAddress,
+} from "../../../state/slices/addressSlice";
+import { filterKeyValuePair } from "../../../utils/function";
 
-const AddressForm = () => {
+const AddressForm = ({ addFormInitState, handleCurrAddEdit }) => {
   const dispatch = useDispatch();
   const userId = useSelector(userIdSelector);
 
   const formik = useFormik({
-    initialValues: {
-      name: "",
-      mobile: "",
-      pinCode: "",
-      addressLine1: "",
-      addressLine2: "",
-      landmark: "",
-      city: "",
-      state: "",
-    },
+    initialValues: addFormInitState
+      ? { ...addFormInitState }
+      : {
+          name: "",
+          mobile: "",
+          pin_code: "",
+          address_line_1: "",
+          address_line_2: "",
+          landmark: "",
+          city: "",
+          state: "",
+        },
     onSubmit: async (values) => {
       try {
-        const data = { userId, ...values };
+        if (addFormInitState === undefined) {
+          const data = { user_id: userId, ...values };
 
-        await dispatch(addressCreateAsync(data)).unwrap();
+          await dispatch(addressCreateAsync(data)).unwrap();
+        } else {
+          const updates = filterKeyValuePair(values, addFormInitState);
 
-        handleResetForm();
+          await dispatch(
+            addressUpdateAsync({ addressId: addFormInitState.id, updates })
+          ).unwrap();
+
+          dispatch(updateAddress({ updates }));
+
+          handleCurrAddEdit();
+        }
       } catch (error) {
         console.log(error);
       }
@@ -49,10 +66,6 @@ const AddressForm = () => {
     validationSchema: addressFormValSch,
     enableReinitialize: true,
   });
-
-  const handleResetForm = () => {
-    formik.resetForm();
-  };
 
   return (
     <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
@@ -90,15 +103,15 @@ const AddressForm = () => {
 
         <TextField
           label="PIN code"
-          name="pinCode"
+          name="pin_code"
           type="text"
           fullWidth
           autoComplete="off"
-          value={formik.values.pinCode}
+          value={formik.values.pin_code}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.pinCode && Boolean(formik.errors.pinCode)}
-          helperText={formik.touched.pinCode && formik.errors.pinCode}
+          error={formik.touched.pin_code && Boolean(formik.errors.pin_code)}
+          helperText={formik.touched.pin_code && formik.errors.pin_code}
           inputProps={{ inputMode: "numeric", maxLength: 6 }}
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6);
@@ -108,30 +121,34 @@ const AddressForm = () => {
 
       <TextField
         label="House/Apartment/Colony/Street"
-        name="addressLine1"
+        name="address_line_1"
         fullWidth
         autoComplete="off"
-        value={formik.values.addressLine1}
+        value={formik.values.address_line_1}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         error={
-          formik.touched.addressLine1 && Boolean(formik.errors.addressLine1)
+          formik.touched.address_line_1 && Boolean(formik.errors.address_line_1)
         }
-        helperText={formik.touched.addressLine1 && formik.errors.addressLine1}
+        helperText={
+          formik.touched.address_line_1 && formik.errors.address_line_1
+        }
       />
 
       <TextField
         label="Area/Sector/Lane"
-        name="addressLine2"
+        name="address_line_2"
         fullWidth
         autoComplete="off"
-        value={formik.values.addressLine2}
+        value={formik.values.address_line_2}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         error={
-          formik.touched.addressLine2 && Boolean(formik.errors.addressLine2)
+          formik.touched.address_line_2 && Boolean(formik.errors.address_line_2)
         }
-        helperText={formik.touched.addressLine2 && formik.errors.addressLine2}
+        helperText={
+          formik.touched.address_line_2 && formik.errors.address_line_2
+        }
       />
 
       <FormControl
@@ -196,9 +213,26 @@ const AddressForm = () => {
         </FormControl>
       </FlexBox>
 
-      <Button type="submit" variant="contained">
-        Submit
-      </Button>
+      <FlexBox csx={{ gap: 2 }}>
+        {addFormInitState && (
+          <Button
+            fullWidth
+            variant="contained"
+            color={"error"}
+            onClick={() => handleCurrAddEdit()}
+          >
+            Cancel
+          </Button>
+        )}
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={addFormInitState && !formik.dirty}
+          fullWidth
+        >
+          Submit
+        </Button>
+      </FlexBox>
     </Stack>
   );
 };

@@ -21,17 +21,17 @@ export const addressFormValSch = Yup.object().shape({
     .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits")
     .required("Mobile number is required"),
 
-  pinCode: Yup.string()
+  pin_code: Yup.string()
     .matches(/^\d{6}$/, "PIN code must be exactly 6 digits")
     .required("PIN code is required"),
 
-  addressLine1: Yup.string()
+  address_line_1: Yup.string()
     .trim()
     .min(3, "Address is too short")
     .max(45, "Address is too long")
     .required("House is required"),
 
-  addressLine2: Yup.string()
+  address_line_2: Yup.string()
     .trim()
     .min(3, "Address is too short")
     .max(45, "Address is too long")

@@ -11,29 +11,7 @@ export const selectAddress = async (userId) => {
 
 export const insertAddress = async (details) => {
   try {
-    const {
-      userId,
-      name,
-      mobile,
-      pinCode,
-      city,
-      state,
-      addressLine1,
-      addressLine2,
-      landmark,
-    } = details;
-
-    const [newAddressId] = await db("address").insert({
-      user_id: userId,
-      name,
-      mobile,
-      pin_code: pinCode,
-      city,
-      state,
-      address_line_1: addressLine1,
-      address_line_2: addressLine2,
-      landmark,
-    });
+    const [newAddressId] = await db("address").insert(details);
 
     return newAddressId;
   } catch (error) {
@@ -46,11 +24,11 @@ export const updateAddress = async (addressId, updates) => {
     const {
       name = null,
       mobile = null,
-      pinCode = null,
+      pin_code = null,
       city = null,
       state = null,
-      addressLine1 = null,
-      addressLine2 = null,
+      address_line_1 = null,
+      address_line_2 = null,
       landmark = null,
     } = updates;
 
@@ -59,11 +37,11 @@ export const updateAddress = async (addressId, updates) => {
       .update({
         name: db.raw("COALESCE(?, name)", [name]),
         mobile: db.raw("COALESCE(?, mobile)", [mobile]),
-        pin_code: db.raw("COALESCE(?, pin_code)", [pinCode]),
+        pin_code: db.raw("COALESCE(?, pin_code)", [pin_code]),
         city: db.raw("COALESCE(?, city)", [city]),
         state: db.raw("COALESCE(?, state)", [state]),
-        address_line_1: db.raw("COALESCE(?, address_line_1)", [addressLine1]),
-        address_line_2: db.raw("COALESCE(?, address_line_2)", [addressLine2]),
+        address_line_1: db.raw("COALESCE(?, address_line_1)", [address_line_1]),
+        address_line_2: db.raw("COALESCE(?, address_line_2)", [address_line_2]),
         landmark: db.raw("COALESCE(?, landmark)", [landmark]),
       });
 
