@@ -9,6 +9,7 @@ import productBrandsReducer from "./slices/productBrandsSlice";
 import productsReducer from "./slices/productsSlice";
 import productsPublicReducer from "./slices/productsPublicSlice";
 import shoppingCartItemsReducer from "./slices/shoppingCartItemsSlice";
+import addressReducer from "./slices/addressSlice";
 
 export default configureStore({
   reducer: {
@@ -21,5 +22,6 @@ export default configureStore({
     products: productsReducer,
     productsPublic: productsPublicReducer,
     shoppingCartItems: shoppingCartItemsReducer,
+    address: addressReducer,
   },
 });
